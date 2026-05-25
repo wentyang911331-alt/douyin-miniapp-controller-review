@@ -4,13 +4,17 @@
 
 ## 当前版本
 
-- 版本号：1.1.0
-- Git 标签：`v1.1.0`
-- 当前状态：完成标题、水印、说明小浮窗、圆角图标体系和功能移除的页面实现
+- 版本号：1.1.1
+- Git 标签：`v1.1.1`
+- 当前状态：已迁移为原生抖音小程序项目，静态 HTML 保留为历史基线
 
 ## 重要文件
 
 - `controller-review(1).html`：原始静态展示页面
+- `app.js` / `app.json` / `app.ttss`：抖音小程序全局文件
+- `project.config.json`：抖音小程序项目配置
+- `pages/controller-review/`：原生小程序页面
+- `assets/icons/`：本地图标资源
 - `PROJECT_SPEC.md`：项目最高规则入口
 - `docs/REQUIREMENTS.md`：需求文档
 - `docs/AGENT_COLLABORATION.md`：子代理协作文档

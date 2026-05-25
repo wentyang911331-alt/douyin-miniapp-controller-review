@@ -1,0 +1,192 @@
+<view class="app {{dark ? '' : 'light'}}">
+  <view class="watermark">小拓子横评</view>
+
+  <view class="topbar">
+    <view class="topline">
+      <text class="title">{{pageTitle}}</text>
+      <view class="tool-row">
+        <button class="icon-btn" bindtap="toggleDark" aria-label="主题">
+          <image class="icon-img" src="/assets/icons/theme.svg" mode="aspectFit" />
+        </button>
+        <button class="icon-btn {{showBadges ? 'active' : ''}}" bindtap="toggleBadges" aria-label="最佳徽章">
+          <image class="icon-img" src="/assets/icons/badge.svg" mode="aspectFit" />
+        </button>
+        <button class="icon-btn {{showRankIdx ? 'active' : ''}}" bindtap="toggleRankIdx" aria-label="排名角标">
+          <image class="icon-img" src="/assets/icons/rank.svg" mode="aspectFit" />
+        </button>
+      </view>
+    </view>
+
+    <scroll-view class="nav-row" scroll-x enhanced show-scrollbar="{{false}}">
+      <button tt:for="{{sections}}" tt:key="id" class="nav-btn {{activeSection === item.id ? 'active' : ''}}" data-id="{{item.id}}" bindtap="scrollToSection">
+        {{item.mark}}
+      </button>
+    </scroll-view>
+
+    <view class="highlight-head">
+      <text class="highlight-label">高亮产品 {{highlightedCountText}}</text>
+      <button tt:if="{{highlighted.length}}" class="clear-btn" bindtap="clearHighlights">
+        <image class="inline-img" src="/assets/icons/close.svg" mode="aspectFit" />
+        <text>清除</text>
+      </button>
+    </view>
+
+    <scroll-view class="chip-row" scroll-x enhanced show-scrollbar="{{false}}">
+      <button
+        tt:for="{{products}}"
+        tt:key="id"
+        class="chip {{item.isRef ? 'ref' : ''}} {{item.highlighted ? 'on' : ''}}"
+        style="{{item.chipStyle}}"
+        data-id="{{item.id}}"
+        bindtap="toggleHighlight"
+      >
+        {{item.short}}
+      </button>
+    </scroll-view>
+  </view>
+
+  <scroll-view class="content" scroll-y scroll-into-view="{{scrollInto}}" scroll-with-animation enhanced show-scrollbar="{{false}}">
+    <view tt:for="{{sections}}" tt:for-item="section" tt:key="id" id="sec-{{section.id}}" class="section">
+      <view class="section-head">
+        <view class="title-group">
+          <text class="section-title">{{section.title}}</text>
+          <button class="icon-btn {{activeInfo === section.id ? 'active' : ''}}" data-id="{{section.id}}" bindtap="toggleInfo" aria-label="模块说明">
+            <image class="icon-img" src="/assets/icons/info.svg" mode="aspectFit" />
+          </button>
+        </view>
+        <button class="icon-btn {{section.showColPicker ? 'active' : ''}}" data-id="{{section.id}}" bindtap="toggleColPicker" aria-label="显示列">
+          <image class="icon-img" src="/assets/icons/columns.svg" mode="aspectFit" />
+        </button>
+      </view>
+
+      <view tt:if="{{activeInfo === section.id}}" class="info-pop">
+        <view class="info-pop-head">
+          <text>{{section.title}}说明</text>
+          <button class="icon-btn" bindtap="closeInfo" aria-label="关闭说明">
+            <image class="icon-img" src="/assets/icons/close.svg" mode="aspectFit" />
+          </button>
+        </view>
+        <text class="info-pop-body">{{section.info}}</text>
+      </view>
+
+      <text tt:if="{{section.note}}" class="note">{{section.note}}</text>
+
+      <view tt:if="{{section.showColPicker}}" class="col-panel">
+        <text class="col-title">显示列</text>
+        <view class="col-chips">
+          <button
+            tt:for="{{section.columns}}"
+            tt:for-item="col"
+            tt:key="key"
+            class="col-chip {{col.visible ? 'on' : ''}}"
+            data-id="{{section.id}}"
+            data-key="{{col.key}}"
+            bindtap="toggleColumn"
+          >
+            {{col.label}}
+          </button>
+        </view>
+      </view>
+
+      <view tt:if="{{section.hasRankable}}" class="view-row">
+        <view class="seg">
+          <button class="seg-btn {{section.view === 'table' ? 'active' : ''}}" data-id="{{section.id}}" data-view="table" bindtap="setView">
+            <image class="inline-img" src="/assets/icons/table.svg" mode="aspectFit" />
+            <text>表格</text>
+          </button>
+          <button class="seg-btn {{section.view === 'rank' ? 'active' : ''}}" data-id="{{section.id}}" data-view="rank" bindtap="setView">
+            <image class="inline-img" src="/assets/icons/trophy.svg" mode="aspectFit" />
+            <text>排行榜</text>
+          </button>
+        </view>
+        <view tt:if="{{section.view === 'rank'}}" class="rank-tools">
+          <scroll-view class="rank-col-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+            <button
+              tt:for="{{section.rankableColumns}}"
+              tt:for-item="col"
+              tt:key="key"
+              class="sort-chip {{section.sortKey === col.key ? 'active' : ''}}"
+              data-id="{{section.id}}"
+              data-key="{{col.key}}"
+              bindtap="setSortKey"
+            >
+              {{col.label}}
+            </button>
+          </scroll-view>
+          <button class="sort-btn" data-id="{{section.id}}" bindtap="toggleSort">
+            <image class="inline-img" src="{{section.isAsc ? '/assets/icons/up.svg' : '/assets/icons/down.svg'}}" mode="aspectFit" />
+            <text>{{section.isAsc ? '升序' : '降序'}}</text>
+          </button>
+          <text tt:if="{{section.sortHint}}" class="hint">{{section.sortHint}}</text>
+        </view>
+      </view>
+
+      <scroll-view tt:if="{{section.view === 'table'}}" class="table-card" scroll-x enhanced show-scrollbar="{{false}}">
+        <view class="table" style="width: {{section.tableWidth}}rpx;">
+          <view class="tr th-row">
+            <view class="cell model-cell model-head">型号</view>
+            <button
+              tt:for="{{section.visibleColumns}}"
+              tt:for-item="col"
+              tt:key="key"
+              class="cell head-cell {{col.rankable ? 'sortable' : ''}} {{section.sortKey === col.key ? 'sorted' : ''}}"
+              data-id="{{section.id}}"
+              data-key="{{col.key}}"
+              bindtap="sortBy"
+            >
+              <text>{{col.label}}</text>
+              <image tt:if="{{col.rankable}}" class="sort-img" src="{{col.sortIcon}}" mode="aspectFit" />
+            </button>
+          </view>
+          <view tt:for="{{section.rows}}" tt:for-item="row" tt:key="id" class="tr {{row.highlighted ? 'is-highlight' : ''}} {{row.isRef ? 'is-ref' : ''}}" style="{{row.rowStyle}}">
+            <view class="cell model-cell {{row.isRef ? 'ref' : ''}}" style="{{row.modelStyle}}">
+              <view class="model-inline">
+                <text tt:if="{{row.rankLabel}}" class="rank-badge {{row.rankLabel === '#1' ? 'first' : ''}}">{{row.rankLabel}}</text>
+                <text>{{row.name}}</text>
+              </view>
+            </view>
+            <view tt:for="{{row.cells}}" tt:for-item="cell" tt:key="key" class="cell data-cell {{cell.tone}} {{row.highlighted ? 'strong' : ''}}">
+              <text>{{cell.display}}</text>
+              <text tt:if="{{cell.best}}" class="best-badge">☆ 最佳</text>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+
+      <view tt:else class="rank-card">
+        <view tt:for="{{section.rankItems}}" tt:for-item="rankItem" tt:key="id" class="rank-item">
+          <view class="rank-main">
+            <view class="rank-name">
+              <text class="rank-number">{{rankItem.rankLabel}}</text>
+              <text class="rank-product" style="{{rankItem.productStyle}}">{{rankItem.name}}</text>
+            </view>
+            <text class="rank-value" style="{{rankItem.valueStyle}}">{{rankItem.display}}</text>
+          </view>
+          <view class="bar">
+            <view class="bar-fill" style="{{rankItem.barStyle}}"></view>
+            <view tt:if="{{rankItem.avgLineStyle}}" class="avg-line" style="{{rankItem.avgLineStyle}}"></view>
+          </view>
+        </view>
+        <view tt:if="{{section.averageText}}" class="avg-note">
+          <text class="avg-mark"></text>
+          <text>{{section.averageText}}</text>
+        </view>
+        <view tt:if="{{section.refRank}}" class="ref-block">
+          <text class="ref-label">参考（不参与排名）</text>
+          <view class="rank-main">
+            <view class="rank-name">
+              <text class="rank-number">参考</text>
+              <text class="rank-product ref-product">{{section.refRank.name}}</text>
+            </view>
+            <text class="rank-value ref-value">{{section.refRank.display}}</text>
+          </view>
+          <view class="bar">
+            <view class="bar-fill ref-fill" style="{{section.refRank.barStyle}}"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="footer">数据来源：7 款控制器实测。九号 M395C 原厂作为「不改装」基准，不参与改装产品的排名比较。</view>
+  </scroll-view>
+</view>

@@ -1,0 +1,12 @@
+{
+  "appid": "",
+  "projectname": "douyin-miniapp-controller-review",
+  "miniprogramRoot": "./",
+  "compileType": "miniprogram",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "postcss": true,
+    "minified": false
+  }
+}

@@ -1,5 +1,39 @@
 # 变更记录
 
+## v1.1.1 - 2026-05-25
+
+### 新增
+
+- 新增原生抖音小程序项目结构
+- 新增 `app.js`、`app.json`、`app.ttss`、`project.config.json`
+- 新增 `pages/controller-review/index.ttml`
+- 新增 `pages/controller-review/index.ttss`
+- 新增 `pages/controller-review/index.js`
+- 新增 `pages/controller-review/index.json`
+- 新增本地图标资源 `assets/icons/*.svg`
+
+### 迁移
+
+- 将 1.1.0 静态 HTML 页面迁移为原生小程序页面
+- 将静态测试数据迁移到小程序前端代码
+- 将主题、高亮、徽章、排名、当前分区、分区视图、排序和隐藏列状态迁移到 `tt.getStorageSync` / `tt.setStorageSync`
+- 将表格阅读体验迁移为 `scroll-view` 横向滚动结构
+- 将说明浮窗、排行榜、排序、列显示控制等交互迁移为 `Page`、`data`、`setData`、`bindtap`
+
+### 保留
+
+- 保留 `controller-review(1).html` 作为 1.1.0 历史基线和对照页面
+- 保留标题、水印、圆角图标体系、测评报告风格和核心数据展示能力
+- 继续不恢复聚焦、录制、截图功能
+
+### 验证
+
+- 通过小程序页面 JS 语法检查
+- 通过 JSON 配置解析检查
+- 通过 `Page` / `tt` 模拟运行冒烟检查
+- 确认 6 个模块、7 个产品行、排行榜切换、排序、隐藏列、高亮和缓存逻辑可运行
+- 禁止项扫描未发现 `document`、`innerHTML`、浏览器 `localStorage`、`web-view`、HTML `table/tr/td/th/select` 等迁移禁用写法
+
 ## v1.1.0 - 2026-05-25
 
 ### 新增
