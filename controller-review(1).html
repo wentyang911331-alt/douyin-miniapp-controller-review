@@ -1,0 +1,1242 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>控制器横评 · 对比手册</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0a0e1a;
+      --panel: #121829;
+      --panel-2: #1a2238;
+      --border: #25304d;
+      --border-soft: #1a2238;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --dim: #64748b;
+      --accent: #22d3ee;
+      --accent-bg: rgba(34, 211, 238, 0.12);
+      --accent-text: #0a0e1a;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --ref-bg: rgba(107, 114, 128, 0.08);
+    }
+
+    body.light {
+      color-scheme: light;
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --panel-2: #f1f5f9;
+      --border: #e2e8f0;
+      --border-soft: #f1f5f9;
+      --text: #0f172a;
+      --muted: #64748b;
+      --dim: #94a3b8;
+      --accent: #ea580c;
+      --accent-bg: rgba(234, 88, 12, 0.10);
+      --accent-text: #ffffff;
+      --success: #059669;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --ref-bg: rgba(107, 114, 128, 0.06);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: 14px;
+      letter-spacing: 0;
+    }
+
+    button, select {
+      font-family: inherit;
+      letter-spacing: 0;
+    }
+
+    button {
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .app {
+      max-width: 400px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding-bottom: 40px;
+      position: relative;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 10px 12px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+    }
+
+    .topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .title {
+      font-size: 14px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .tool-row,
+    .nav-row,
+    .chip-row,
+    .section-actions,
+    .view-row {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .tool-row {
+      flex-shrink: 0;
+    }
+
+    .icon-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: var(--panel-2);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .icon-btn.active {
+      color: var(--accent);
+      background: var(--accent-bg);
+      border-color: var(--accent);
+    }
+
+    .nav-row,
+    .chip-row {
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+
+    .nav-row::-webkit-scrollbar,
+    .chip-row::-webkit-scrollbar,
+    .table-wrap::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-btn {
+      border: 0;
+      border-radius: 7px;
+      padding: 5px 9px;
+      background: var(--panel-2);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .nav-btn.active {
+      background: var(--accent);
+      color: var(--accent-text);
+    }
+
+    .highlight-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 2px 0 4px;
+    }
+
+    .highlight-label {
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .clear-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-size: 10px;
+      padding: 2px;
+    }
+
+    .chip {
+      flex-shrink: 0;
+      border-radius: 12px;
+      padding: 4px 9px;
+      border: 1.5px solid var(--border);
+      background: var(--panel-2);
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .chip.ref {
+      border-style: dashed;
+    }
+
+    .record-exit {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 100;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .content {
+      padding: 10px 10px 0;
+    }
+
+    .section {
+      margin-bottom: 20px;
+      scroll-margin-top: 180px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      padding-left: 2px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    .note {
+      margin: 0 0 8px;
+      padding-left: 2px;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .col-panel,
+    .table-card,
+    .rank-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .col-panel {
+      padding: 8px;
+      margin-bottom: 8px;
+    }
+
+    .col-title {
+      font-size: 10px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .col-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .col-chip {
+      border-radius: 10px;
+      padding: 3px 8px;
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .col-chip.on {
+      border-color: var(--accent);
+      background: var(--accent-bg);
+      color: var(--accent);
+    }
+
+    .seg {
+      display: flex;
+      padding: 2px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: var(--panel-2);
+    }
+
+    .seg-btn {
+      border: 0;
+      border-radius: 5px;
+      padding: 4px 9px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .seg-btn.active {
+      background: var(--accent);
+      color: var(--accent-text);
+    }
+
+    .sort-select,
+    .sort-btn {
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      color: var(--text);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 7px;
+    }
+
+    .sort-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 9px;
+    }
+
+    .table-card {
+      overflow: hidden;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    th {
+      background: var(--panel-2);
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      text-align: left;
+      padding: 8px 9px;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    th.sortable {
+      cursor: pointer;
+    }
+
+    th.sorted {
+      color: var(--accent);
+    }
+
+    td {
+      padding: 8px 9px;
+      border-top: 1px solid var(--border-soft);
+      white-space: nowrap;
+    }
+
+    .model-cell,
+    .model-head {
+      position: sticky;
+      left: 0;
+      min-width: 110px;
+      border-right: 1px solid var(--border);
+      z-index: 1;
+    }
+
+    .model-head {
+      z-index: 2;
+      background: var(--panel-2);
+    }
+
+    .model-cell {
+      background: var(--panel);
+      font-weight: 700;
+      border-left: 3px solid transparent;
+    }
+
+    .model-cell.ref {
+      border-left-style: dashed;
+      border-left-color: var(--dim);
+    }
+
+    .model-inline {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      line-height: 1.2;
+    }
+
+    .rank-badge,
+    .best-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 3px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .rank-badge {
+      min-width: 18px;
+      padding: 1px 4px;
+      background: var(--panel-2);
+      color: var(--muted);
+      font-size: 9px;
+    }
+
+    .rank-badge.first,
+    .best-badge {
+      background: var(--accent);
+      color: var(--accent-text);
+    }
+
+    .best-badge {
+      margin-left: 4px;
+      padding: 1px 4px;
+      font-size: 8px;
+    }
+
+    .good { color: var(--success); }
+    .warn { color: var(--warning); }
+    .bad { color: var(--danger); }
+
+    .rank-card {
+      padding: 10px;
+    }
+
+    .rank-item {
+      padding: 7px 2px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .rank-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
+
+    .rank-name {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .rank-number {
+      width: 22px;
+      text-align: center;
+      flex-shrink: 0;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .rank-product {
+      border-left: 3px solid transparent;
+      padding-left: 6px;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .rank-value {
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .bar {
+      position: relative;
+      height: 6px;
+      margin-left: 30px;
+      background: var(--panel-2);
+      border-radius: 3px;
+      overflow: visible;
+    }
+
+    .bar-fill {
+      position: absolute;
+      inset: 0 auto 0 0;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .avg-line {
+      position: absolute;
+      top: -2px;
+      bottom: -2px;
+      width: 1px;
+      background: var(--muted);
+      opacity: 0.5;
+    }
+
+    .avg-note {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 6px;
+      padding-left: 30px;
+      color: var(--dim);
+      font-size: 9px;
+    }
+
+    .avg-mark {
+      width: 10px;
+      height: 1px;
+      background: var(--muted);
+      opacity: 0.5;
+    }
+
+    .ref-block {
+      margin-top: 6px;
+      padding: 7px 2px;
+      border-top: 2px dashed var(--border);
+      opacity: 0.85;
+    }
+
+    .ref-label {
+      margin: 0 0 4px 30px;
+      color: var(--dim);
+      font-size: 9px;
+    }
+
+    .footer {
+      margin-top: 18px;
+      padding: 10px;
+      color: var(--dim);
+      font-size: 10px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .faded {
+      opacity: 0.25;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    body.record .app {
+      max-width: 400px;
+    }
+
+    body.record .content {
+      font-size: 16px;
+    }
+
+    body.record .topbar {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <main id="app" class="app"></main>
+
+  <script>
+    const PRODUCTS = [
+      { id: 'yanxin', name: '雁鑫 X300', short: '雁鑫', isRef: false, color: '#22d3ee' },
+      { id: 'spd', name: 'SPD 72260S', short: 'SPD', isRef: false, color: '#f59e0b' },
+      { id: 'lingbo', name: '凌博 E260 Pro Max', short: '凌博', isRef: false, color: '#10b981' },
+      { id: 'apt', name: 'APT F300', short: 'APT', isRef: false, color: '#ec4899' },
+      { id: 'zhike', name: '智科 72260', short: '智科', isRef: false, color: '#a855f7' },
+      { id: 'datai', name: '大泰 72260', short: '大泰', isRef: false, color: '#ef4444' },
+      { id: 'ninebot', name: '九号 M395C 原厂', short: '九号原厂', isRef: true, color: '#6b7280' },
+    ];
+
+    const HARDWARE = {
+      yanxin: { price: 768.75, busA: 100, phaseA: 300, vMin: 48, vMax: 72, water: '无', proto: '全协议' },
+      spd: { price: 488, busA: 80, phaseA: 260, vMin: 48, vMax: 72, water: '无', proto: 'CAN协议' },
+      lingbo: { price: 438, busA: 90, phaseA: 260, vMin: 48, vMax: 76, water: '无', proto: 'CAN协议' },
+      apt: { price: 558, busA: 100, phaseA: 300, vMin: 48, vMax: 80, water: '无', proto: '全协议' },
+      zhike: { price: 385, busA: 80, phaseA: 260, vMin: 48, vMax: 76, water: '无', proto: 'CAN协议' },
+      datai: { price: 410, busA: 90, phaseA: 260, vMin: 48, vMax: 72, water: '无', proto: '全协议' },
+      ninebot: { price: 143, busA: 40, phaseA: null, vMin: 72, vMax: 72, water: '无', proto: 'CAN协议' },
+    };
+
+    const SOFTWARE = {
+      yanxin: { bt: '连3次均成功', ota: 'OTA在线升级', score: '4/5', label: '部分说明', cruise: '松油门可激活', brakeCruise: '可激活', parkLight: '不亮' },
+      spd: { bt: '连3次均成功', ota: 'OTA在线升级', score: '4/5', label: '无说明', cruise: '仅拧电门可激活', brakeCruise: '不可激活', parkLight: '亮' },
+      lingbo: { bt: '连3次均成功', ota: 'OTA在线升级', score: '4/5', label: '部分说明', cruise: '仅拧电门可激活', brakeCruise: '可激活', parkLight: '高温无法打开/低温不亮后灯' },
+      apt: { bt: '连3次均成功', ota: 'OTA在线升级', score: '5/5', label: '说明清晰易懂', cruise: '松油门可激活', brakeCruise: '可激活', parkLight: '亮' },
+      zhike: { bt: '连3次均成功', ota: 'OTA在线升级', score: '4/5', label: '部分说明', cruise: '松油门可激活', brakeCruise: '可激活', parkLight: '不亮' },
+      datai: { bt: '连3次均成功', ota: 'OTA在线升级', score: '4/5', label: '部分说明', cruise: '松油门可激活', brakeCruise: '可激活', parkLight: '不亮' },
+      ninebot: { bt: '—', ota: '无', score: '—', label: '无', cruise: '—', brakeCruise: '—', parkLight: '—' },
+    };
+
+    const HANDLING = {
+      yanxin: { delay: '延迟可控', linearity: '很线性', deadzone: '适中' },
+      spd: { delay: '延迟较大', linearity: '适中', deadzone: '适中' },
+      lingbo: { delay: '延迟可控', linearity: '很线性', deadzone: '适中' },
+      apt: { delay: '延迟可控', linearity: '不线性', deadzone: '适中' },
+      zhike: { delay: '延迟可控', linearity: '适中', deadzone: '较小' },
+      datai: { delay: '延迟可控', linearity: '很线性', deadzone: '适中' },
+      ninebot: { delay: '延迟可控', linearity: '很线性', deadzone: '—' },
+    };
+
+    const THERMAL = {
+      yanxin: { strategy: '中速渐降(低位保持)', baseline: 75.7, d90: { s: 257, disp: '4分17秒 / 82°C / 3.70km' }, d80: { s: 296, disp: '4分56秒 / 86°C / 4.20km' }, d60: { s: 370, disp: '6分10秒 / 94°C / 5.18km' }, d40: { s: 562, disp: '9分22秒 / 102°C / 7.48km' }, final: { v: 32, disp: '24.4A (32%)' } },
+      spd: { strategy: '中速渐降(中位保持)', baseline: 76.6, d90: { s: 251, disp: '4分11秒 / 83°C / 3.62km' }, d80: { s: 274, disp: '4分34秒 / 87°C / 3.93km' }, d60: { s: 387, disp: '6分27秒 / 96°C / 5.37km' }, d40: { s: null, disp: '—' }, final: { v: 48, disp: '37.2A (48%)' } },
+      lingbo: { strategy: '几乎不限流', baseline: 77.6, d90: { s: null, disp: '—' }, d80: { s: null, disp: '—' }, d60: { s: null, disp: '—' }, d40: { s: null, disp: '—' }, final: { v: 94, disp: '73.0A (94%)' } },
+      apt: { strategy: '断崖式(低位保持)', baseline: 72.3, d90: { s: 314, disp: '5分14秒 / 84°C / 4.22km' }, d80: { s: 326, disp: '5分26秒 / 86°C / 4.37km' }, d60: { s: 329, disp: '5分29秒 / 86°C / 4.39km' }, d40: { s: 393, disp: '6分33秒 / 92°C / 5.00km' }, final: { v: 25, disp: '18.7A (25%)' } },
+      zhike: { strategy: '断崖式(低位保持)', baseline: 75.3, d90: { s: 177, disp: '2分57秒 / 78°C / 2.45km' }, d80: { s: 177, disp: '2分57秒 / 78°C / 2.45km' }, d60: { s: 212, disp: '3分32秒 / 87°C / 2.92km' }, d40: { s: 318, disp: '5分18秒 / 92°C / 4.11km' }, final: { v: 29, disp: '22.1A (29%)' } },
+      datai: { strategy: '硬断电', baseline: 73.8, d90: { s: 368, disp: '6分08秒 / 95°C' }, d80: { s: 380, disp: '6分20秒 / 98°C' }, d60: { s: 380, disp: '6分20秒 / 98°C' }, d40: { s: 380, disp: '6分20秒 / 98°C' }, final: { v: 0, disp: '断电 (6分14秒/97°C)' } },
+      ninebot: { strategy: '硬断电', baseline: 36.4, d90: { s: 240, disp: '4分00秒 / 94°C' }, d80: { s: 257, disp: '4分17秒 / 97°C' }, d60: { s: 346, disp: '5分46秒 / 104°C' }, d40: { s: 493, disp: '8分13秒 / 112°C' }, final: { v: 0, disp: '断电 (8分06秒/111°C)' } },
+    };
+
+    const STABLE = {
+      yanxin: { endTime: '4分17秒', endKm: '3.69km', avgPower: 4313, whPerH: 4313, whPerKm: 83.7, kmPerAh: 0.94, avgV: 78.60, avgA: 55.07 },
+      spd: { endTime: '4分11秒', endKm: '3.62km', avgPower: 4243, whPerH: 4243, whPerKm: 82.1, kmPerAh: 0.96, avgV: 78.97, avgA: 53.94 },
+      lingbo: { endTime: '12分02秒', endKm: '10.00km', avgPower: 3903, whPerH: 3903, whPerKm: 78.4, kmPerAh: 1.00, avgV: 78.98, avgA: 49.65 },
+      apt: { endTime: '5分14秒', endKm: '4.22km', avgPower: 3780, whPerH: 3780, whPerKm: 78.4, kmPerAh: 0.97, avgV: 76.59, avgA: 49.58 },
+      zhike: { endTime: '2分57秒', endKm: '2.45km', avgPower: 3724, whPerH: 3724, whPerKm: 75.1, kmPerAh: 1.04, avgV: 78.52, avgA: 47.64 },
+      datai: { endTime: '6分08秒', endKm: '—', avgPower: 4147, whPerH: 4147, whPerKm: null, kmPerAh: null, avgV: 78.04, avgA: 53.33 },
+      ninebot: { endTime: '4分00秒', endKm: '—', avgPower: 2144, whPerH: 2144, whPerKm: null, kmPerAh: null, avgV: 77.17, avgA: 27.81 },
+    };
+
+    const ACCEL = {
+      yanxin: { a030: 4.00, a060: 11.71, a4070: 10.64, t500: 29.88, v500: 81.45 },
+      spd: { a030: 3.50, a060: 10.24, a4070: 9.36, t500: 28.52, v500: 85.06 },
+      lingbo: { a030: 3.65, a060: 10.35, a4070: 9.34, t500: 28.76, v500: 85.09 },
+      apt: { a030: 3.79, a060: 11.75, a4070: 10.84, t500: 29.68, v500: 81.11 },
+      zhike: { a030: 3.72, a060: 11.07, a4070: 10.21, t500: 29.32, v500: 83.52 },
+      datai: { a030: 3.69, a060: 10.61, a4070: 9.99, t500: 29.16, v500: 83.76 },
+      ninebot: { a030: null, a060: null, a4070: null, t500: 43.52, v500: 59.75 },
+    };
+
+    const SEC_CONFIG = {
+      hardware: {
+        title: '① 硬件规格对比',
+        data: HARDWARE,
+        columns: [
+          { key: 'price', label: '价格', type: 'number', unit: '元', better: 'low', rankable: true },
+          { key: 'busA', label: '峰值母线', type: 'number', unit: 'A', better: 'high', rankable: true },
+          { key: 'phaseA', label: '峰值相线', type: 'number', unit: 'A', better: 'high', rankable: true },
+          { key: 'vMin', label: '最低电压', type: 'number', unit: 'V', better: 'none', rankable: true },
+          { key: 'vMax', label: '最高电压', type: 'number', unit: 'V', better: 'high', rankable: true },
+          { key: 'water', label: '水冷', type: 'text', rankable: false },
+          { key: 'proto', label: '协议', type: 'text', rankable: false },
+        ],
+      },
+      software: {
+        title: '② 交互软件与辅助功能',
+        data: SOFTWARE,
+        colorize: true,
+        columns: [
+          { key: 'bt', label: '蓝牙稳定', type: 'text', rankable: false },
+          { key: 'ota', label: '固件升级', type: 'text', rankable: false },
+          { key: 'score', label: '软件评分', type: 'text', rankable: false, highlight: ['apt'] },
+          { key: 'label', label: '调节项标注', type: 'text', rankable: false, highlight: ['apt'] },
+          { key: 'cruise', label: '巡航激活', type: 'text', rankable: false },
+          { key: 'brakeCruise', label: '制动巡航', type: 'text', rankable: false },
+          { key: 'parkLight', label: '驻车刹车灯', type: 'text', rankable: false },
+        ],
+      },
+      handling: {
+        title: '③ 日常骑行手感（模拟跟车）',
+        data: HANDLING,
+        colorize: true,
+        columns: [
+          { key: 'delay', label: '电门延迟', type: 'text', rankable: false },
+          { key: 'linearity', label: '电门线性度', type: 'text', rankable: false },
+          { key: 'deadzone', label: '电门空行程', type: 'text', rankable: false },
+        ],
+      },
+      thermal: {
+        title: '④ 10km 温控限流路径',
+        data: THERMAL,
+        note: '基线 = 起步后前 60 秒内峰值电流滚动最大值。跌破 = 包络首次持续低于基线百分比的时刻。',
+        columns: [
+          { key: 'strategy', label: '限流策略', type: 'text', rankable: false },
+          { key: 'baseline', label: '基线电流', type: 'number', unit: 'A', better: 'high', rankable: true },
+          { key: 'd90', label: '首次跌破90%', type: 'time', better: 'high', rankable: true, valKey: 's', dispKey: 'disp' },
+          { key: 'd80', label: '跌破80%', type: 'time', better: 'high', rankable: true, valKey: 's', dispKey: 'disp' },
+          { key: 'd60', label: '跌破60%', type: 'time', better: 'high', rankable: true, valKey: 's', dispKey: 'disp' },
+          { key: 'd40', label: '跌破40%', type: 'time', better: 'high', rankable: true, valKey: 's', dispKey: 'disp' },
+          { key: 'final', label: '最终保持', type: 'percent', better: 'high', rankable: true, valKey: 'v', dispKey: 'disp' },
+        ],
+      },
+      stable: {
+        title: '⑤ 稳定输出区耗电对比',
+        data: STABLE,
+        note: '从车辆起步（电流首次 > 5A）至首次跌破 90% 基线的区间。凌博全程未限流即全段 10km。',
+        columns: [
+          { key: 'endTime', label: '截止时间', type: 'text', rankable: false },
+          { key: 'endKm', label: '区间里程', type: 'text', rankable: false },
+          { key: 'avgPower', label: '平均功率', type: 'number', unit: 'W', better: 'high', rankable: true },
+          { key: 'whPerH', label: '单位时间耗能', type: 'number', unit: 'W·h/h', better: 'low', rankable: true },
+          { key: 'whPerKm', label: 'Wh/km', type: 'number', unit: '', better: 'low', rankable: true },
+          { key: 'kmPerAh', label: 'km/Ah', type: 'number', unit: '', better: 'high', rankable: true },
+          { key: 'avgV', label: '平均电压', type: 'number', unit: 'V', better: 'none', rankable: true },
+          { key: 'avgA', label: '平均电流', type: 'number', unit: 'A', better: 'none', rankable: true },
+        ],
+      },
+      accel: {
+        title: '⑥ 加速性能横评',
+        data: ACCEL,
+        note: '每项取 3 次测试平均值。九号原厂受 40A 硬件限制未执行 0-30/0-60/40-70，仅作参考。',
+        columns: [
+          { key: 'a030', label: '0-30', type: 'number', unit: 's', better: 'low', rankable: true },
+          { key: 'a060', label: '0-60', type: 'number', unit: 's', better: 'low', rankable: true },
+          { key: 'a4070', label: '40-70', type: 'number', unit: 's', better: 'low', rankable: true },
+          { key: 't500', label: '500m耗时', type: 'number', unit: 's', better: 'low', rankable: true },
+          { key: 'v500', label: '500m极速', type: 'number', unit: 'km/h', better: 'high', rankable: true },
+        ],
+      },
+    };
+
+    const STORAGE_KEY = 'ctrl-review-html-v1';
+    const appRoot = document.getElementById('app');
+    const icon = { theme: '◐', focus: '⌖', badge: '☆', rank: '#', video: '▣', columns: '▥', download: '⇩', table: '▦', trophy: '▲', up: '↑', down: '↓', sort: '↕', close: '×' };
+
+    const state = {
+      dark: true,
+      highlighted: [],
+      focusMode: false,
+      recordMode: false,
+      showBadges: true,
+      showRankIdx: true,
+      activeSection: 'hardware',
+      sections: {},
+      ...loadState(),
+    };
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch {
+        return {};
+      }
+    }
+
+    function saveState() {
+      const toSave = {
+        dark: state.dark,
+        highlighted: state.highlighted,
+        focusMode: state.focusMode,
+        showBadges: state.showBadges,
+        showRankIdx: state.showRankIdx,
+        activeSection: state.activeSection,
+        sections: state.sections,
+      };
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave)); } catch {}
+    }
+
+    function ensureSectionState(id) {
+      const cfg = SEC_CONFIG[id];
+      const firstRankable = cfg.columns.find(c => c.rankable);
+      if (!state.sections[id]) {
+        state.sections[id] = {
+          view: 'table',
+          sortKey: firstRankable ? firstRankable.key : null,
+          sortAsc: null,
+          hiddenCols: [],
+          showColPicker: false,
+        };
+      }
+      return state.sections[id];
+    }
+
+    function getNumeric(val, col) {
+      if (val == null) return null;
+      if (typeof val === 'object') return val[col.valKey] ?? null;
+      if (typeof val === 'number') return val;
+      return null;
+    }
+
+    function getDisplay(val, col) {
+      if (val == null || val === '—') return '—';
+      if (typeof val === 'object') return val[col.dispKey] || '—';
+      if (col.unit && typeof val === 'number') return `${val}${col.unit}`;
+      return String(val);
+    }
+
+    function textTone(val) {
+      if (!val) return '';
+      const good = ['连3次均成功', '说明清晰易懂', '可激活', '很线性', '延迟可控', '亮', 'OTA在线升级', '全协议'];
+      const bad = ['无说明', '不可激活', '不亮', '不线性', '延迟较大', '断电', '硬断电', '几乎不限流'];
+      const warn = ['部分说明', '适中', '较小', '高温无法打开/低温不亮后灯', 'CAN协议'];
+      if (good.some(k => val === k)) return 'good';
+      if (bad.some(k => val.includes(k))) return 'bad';
+      if (warn.some(k => val === k)) return 'warn';
+      return '';
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function hexToRgb(hex) {
+      const clean = hex.replace('#', '');
+      return {
+        r: parseInt(clean.slice(0, 2), 16),
+        g: parseInt(clean.slice(2, 4), 16),
+        b: parseInt(clean.slice(4, 6), 16),
+      };
+    }
+
+    function rgba(hex, alpha) {
+      const c = hexToRgb(hex);
+      return `rgba(${c.r}, ${c.g}, ${c.b}, ${alpha})`;
+    }
+
+    function visibleCols(id) {
+      const cfg = SEC_CONFIG[id];
+      const sec = ensureSectionState(id);
+      return cfg.columns.filter(c => !sec.hiddenCols.includes(c.key));
+    }
+
+    function currentSort(id) {
+      const sec = ensureSectionState(id);
+      const cols = visibleCols(id);
+      const col = cols.find(c => c.key === sec.sortKey) || cols.find(c => c.rankable) || null;
+      const defaultAsc = col && col.better === 'low';
+      return { col, isAsc: sec.sortAsc === null || sec.sortAsc === undefined ? defaultAsc : sec.sortAsc };
+    }
+
+    function setAndRender(mutator, keepScroll) {
+      const y = window.scrollY;
+      mutator();
+      saveState();
+      render();
+      if (keepScroll) window.scrollTo({ top: y });
+    }
+
+    function render() {
+      document.body.classList.toggle('light', !state.dark);
+      document.body.classList.toggle('record', state.recordMode);
+      appRoot.innerHTML = `${renderTopbar()}${state.recordMode ? renderRecordExit() : ''}<div class="content">${Object.keys(SEC_CONFIG).map(renderSection).join('')}${renderFooter()}</div>`;
+    }
+
+    function renderTopbar() {
+      if (state.recordMode) return '';
+      return `
+        <div class="topbar">
+          <div class="topline">
+            <div class="title">控制器横评 · 对比手册</div>
+            <div class="tool-row">
+              ${toolButton('toggleDark', icon.theme, '主题', false)}
+              ${toolButton('toggleFocus', icon.focus, '聚焦模式', state.focusMode)}
+              ${toolButton('toggleBadges', icon.badge, '最佳徽章', state.showBadges)}
+              ${toolButton('toggleRankIdx', icon.rank, '排名角标', state.showRankIdx)}
+              ${toolButton('enterRecord', icon.video, '录制模式', false)}
+            </div>
+          </div>
+          <div class="nav-row">
+            ${Object.entries(SEC_CONFIG).map(([id, cfg]) => `<button class="nav-btn ${state.activeSection === id ? 'active' : ''}" onclick="app.scrollToSection('${id}')">${escapeHtml(cfg.title.match(/[①②③④⑤⑥]/)?.[0] || '')}</button>`).join('')}
+          </div>
+          <div class="highlight-head">
+            <div class="highlight-label">高亮产品 ${state.highlighted.length ? `(${state.highlighted.length})` : ''}</div>
+            ${state.highlighted.length ? `<button class="clear-btn" onclick="app.clearHighlights()">${icon.close} 清除</button>` : ''}
+          </div>
+          <div class="chip-row">
+            ${PRODUCTS.map(p => {
+              const on = state.highlighted.includes(p.id);
+              const style = on ? `style="border-color:${p.color};background:${rgba(p.color, 0.14)};color:${p.color}"` : '';
+              return `<button class="chip ${p.isRef ? 'ref' : ''}" ${style} onclick="app.toggleHighlight('${p.id}')">${escapeHtml(p.short)}</button>`;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function toolButton(action, label, title, active) {
+      return `<button class="icon-btn ${active ? 'active' : ''}" title="${escapeHtml(title)}" aria-label="${escapeHtml(title)}" onclick="app.${action}()">${label}</button>`;
+    }
+
+    function renderRecordExit() {
+      return `<button class="record-exit" onclick="app.exitRecord()">退出录制</button>`;
+    }
+
+    function renderSection(id) {
+      const cfg = SEC_CONFIG[id];
+      const sec = ensureSectionState(id);
+      const cols = visibleCols(id);
+      const firstRankable = cfg.columns.find(c => c.rankable);
+      const { col, isAsc } = currentSort(id);
+      return `
+        <section id="sec-${id}" class="section">
+          <div class="section-head">
+            <div class="section-title">${escapeHtml(cfg.title)}</div>
+            <div class="section-actions">
+              <button class="icon-btn ${sec.showColPicker ? 'active' : ''}" title="显示列" aria-label="显示列" onclick="app.toggleColPicker('${id}')">${icon.columns}</button>
+              <button class="icon-btn" title="截图" aria-label="截图" onclick="app.exportImage()">${icon.download}</button>
+            </div>
+          </div>
+          ${cfg.note ? `<p class="note">${escapeHtml(cfg.note)}</p>` : ''}
+          ${sec.showColPicker ? renderColPanel(id) : ''}
+          ${firstRankable ? renderViewControls(id, cols, col, isAsc) : ''}
+          ${sec.view === 'rank' ? renderRank(id, col, isAsc) : renderTable(id, cols, col, isAsc)}
+        </section>
+      `;
+    }
+
+    function renderColPanel(id) {
+      const cfg = SEC_CONFIG[id];
+      const sec = ensureSectionState(id);
+      return `
+        <div class="col-panel">
+          <div class="col-title">显示列</div>
+          <div class="col-chips">
+            ${cfg.columns.map(c => {
+              const on = !sec.hiddenCols.includes(c.key);
+              return `<button class="col-chip ${on ? 'on' : ''}" onclick="app.toggleColumn('${id}', '${c.key}')">${escapeHtml(c.label)}</button>`;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderViewControls(id, cols, col, isAsc) {
+      const sec = ensureSectionState(id);
+      const rankableCols = cols.filter(c => c.rankable);
+      return `
+        <div class="view-row" style="margin-bottom:8px;flex-wrap:wrap">
+          <div class="seg">
+            <button class="seg-btn ${sec.view === 'table' ? 'active' : ''}" onclick="app.setView('${id}', 'table')">${icon.table} 表格</button>
+            <button class="seg-btn ${sec.view === 'rank' ? 'active' : ''}" onclick="app.setView('${id}', 'rank')">${icon.trophy} 排行榜</button>
+          </div>
+          ${sec.view === 'rank' ? `
+            <select class="sort-select" onchange="app.setSortKey('${id}', this.value)">
+              ${rankableCols.map(c => `<option value="${c.key}" ${col && col.key === c.key ? 'selected' : ''}>${escapeHtml(c.label)}</option>`).join('')}
+            </select>
+            <button class="sort-btn" onclick="app.toggleSort('${id}')">${isAsc ? icon.up : icon.down} ${isAsc ? '升序' : '降序'}</button>
+            ${col && col.better && col.better !== 'none' ? `<span class="hint">${col.better === 'low' ? '越小越好' : '越大越好'}</span>` : ''}
+          ` : ''}
+        </div>
+      `;
+    }
+
+    function renderTable(id, cols, sortCol, isAsc) {
+      const cfg = SEC_CONFIG[id];
+      const bestMap = buildBestMap(cfg, cols);
+      const sortedProducts = sortProducts(cfg, cols, sortCol, isAsc);
+      const rankIndexMap = buildRankIndexMap(cfg, cols, sortCol);
+      const anyHl = state.highlighted.length > 0;
+
+      return `
+        <div class="table-card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th class="model-head">型号</th>
+                  ${cols.map(c => {
+                    const sorted = sortCol && sortCol.key === c.key;
+                    return `<th class="${c.rankable ? 'sortable' : ''} ${sorted ? 'sorted' : ''}" ${c.rankable ? `onclick="app.sortBy('${id}', '${c.key}')"` : ''}>
+                      ${escapeHtml(c.label)} ${c.rankable ? (sorted ? (isAsc ? icon.up : icon.down) : icon.sort) : ''}
+                    </th>`;
+                  }).join('')}
+                </tr>
+              </thead>
+              <tbody>
+                ${sortedProducts.map(p => renderTableRow(cfg, cols, p, bestMap, rankIndexMap, anyHl)).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderTableRow(cfg, cols, p, bestMap, rankIndexMap, anyHl) {
+      const isHl = state.highlighted.includes(p.id);
+      const faded = state.focusMode && anyHl && !isHl;
+      const rankIdx = rankIndexMap[p.id];
+      const rowStyle = `background:${isHl ? rgba(p.color, 0.10) : p.isRef ? 'var(--ref-bg)' : 'transparent'};`;
+      const cellStyle = [
+        isHl ? `color:${p.color};background:${rgba(p.color, 0.14)};border-left-color:${p.color};` : '',
+        p.isRef && !isHl ? 'background:var(--panel);border-left-color:var(--dim);' : ''
+      ].join('');
+      return `
+        <tr class="${faded ? 'faded' : ''}" style="${rowStyle}">
+          <td class="model-cell ${p.isRef ? 'ref' : ''}" style="${cellStyle}">
+            <div class="model-inline">
+              ${rankIdx && !p.isRef ? `<span class="rank-badge ${rankIdx === 1 ? 'first' : ''}">#${rankIdx}</span>` : ''}
+              <span>${escapeHtml(p.name)}</span>
+            </div>
+          </td>
+          ${cols.map(c => {
+            const raw = cfg.data[p.id]?.[c.key];
+            const display = getDisplay(raw, c);
+            const tone = cfg.colorize ? textTone(display) : '';
+            const isBest = state.showBadges && bestMap[c.key] === p.id && !p.isRef;
+            return `<td style="${isHl ? 'font-weight:700' : ''}"><span class="${tone}">${escapeHtml(display)}</span>${isBest ? '<span class="best-badge">最佳</span>' : ''}</td>`;
+          }).join('')}
+        </tr>
+      `;
+    }
+
+    function buildBestMap(cfg, cols) {
+      const map = {};
+      cols.forEach(c => {
+        if (!c.rankable || c.better === 'none' || c.better == null) return;
+        const items = PRODUCTS.filter(p => !p.isRef)
+          .map(p => ({ id: p.id, v: getNumeric(cfg.data[p.id]?.[c.key], c) }))
+          .filter(x => x.v != null);
+        if (!items.length) return;
+        items.sort((a, b) => c.better === 'low' ? a.v - b.v : b.v - a.v);
+        map[c.key] = items[0].id;
+      });
+      cols.forEach(c => {
+        if (c.highlight && !map[c.key]) map[c.key] = c.highlight[0];
+      });
+      return map;
+    }
+
+    function sortProducts(cfg, cols, sortCol, isAsc) {
+      if (!sortCol || !sortCol.rankable) return PRODUCTS.slice();
+      const nonRef = PRODUCTS.filter(p => !p.isRef);
+      const ref = PRODUCTS.filter(p => p.isRef);
+      const withVal = nonRef.filter(p => getNumeric(cfg.data[p.id]?.[sortCol.key], sortCol) != null);
+      const noVal = nonRef.filter(p => getNumeric(cfg.data[p.id]?.[sortCol.key], sortCol) == null);
+      withVal.sort((a, b) => {
+        const av = getNumeric(cfg.data[a.id]?.[sortCol.key], sortCol);
+        const bv = getNumeric(cfg.data[b.id]?.[sortCol.key], sortCol);
+        return isAsc ? av - bv : bv - av;
+      });
+      return [...withVal, ...noVal, ...ref];
+    }
+
+    function buildRankIndexMap(cfg, cols, sortCol) {
+      if (!sortCol || !sortCol.rankable || !state.showRankIdx || sortCol.better === 'none') return {};
+      const items = PRODUCTS.filter(p => !p.isRef)
+        .map(p => ({ id: p.id, v: getNumeric(cfg.data[p.id]?.[sortCol.key], sortCol) }))
+        .filter(x => x.v != null);
+      items.sort((a, b) => sortCol.better === 'low' ? a.v - b.v : b.v - a.v);
+      return Object.fromEntries(items.map((x, i) => [x.id, i + 1]));
+    }
+
+    function renderRank(id, col, isAsc) {
+      const cfg = SEC_CONFIG[id];
+      if (!col) return `<div class="rank-card"><span class="hint">请选择排序维度</span></div>`;
+      const anyHl = state.highlighted.length > 0;
+      const items = PRODUCTS.filter(p => !p.isRef).map(p => ({
+        product: p,
+        value: getNumeric(cfg.data[p.id]?.[col.key], col),
+        display: getDisplay(cfg.data[p.id]?.[col.key], col),
+      }));
+      const withVal = items.filter(x => x.value != null);
+      const noVal = items.filter(x => x.value == null);
+      withVal.sort((a, b) => isAsc ? a.value - b.value : b.value - a.value);
+      const ordered = [...withVal, ...noVal];
+      const values = withVal.map(x => x.value);
+      const absMax = values.length ? Math.max(...values) : 0;
+      const average = values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0;
+      const byGood = withVal.slice().sort((a, b) => col.better === 'low' ? a.value - b.value : b.value - a.value);
+      const refProduct = PRODUCTS.find(p => p.isRef);
+      const refValue = refProduct ? getNumeric(cfg.data[refProduct.id]?.[col.key], col) : null;
+      const refDisplay = refProduct ? getDisplay(cfg.data[refProduct.id]?.[col.key], col) : '—';
+
+      return `
+        <div class="rank-card">
+          ${ordered.map((item, idx) => {
+            const p = item.product;
+            const isHl = state.highlighted.includes(p.id);
+            const faded = state.focusMode && anyHl && !isHl;
+            let rankIdx = idx + 1;
+            if (col.better && col.better !== 'none') {
+              const goodIdx = byGood.findIndex(x => x.product.id === p.id);
+              rankIdx = goodIdx >= 0 ? goodIdx + 1 : null;
+            }
+            const medal = rankIdx === 1 ? '1' : rankIdx === 2 ? '2' : rankIdx === 3 ? '3' : null;
+            const barWidth = item.value == null || !absMax ? 0 : Math.max(0, (item.value / absMax) * 100);
+            const avgLine = item.value != null && absMax > 0 ? (average / absMax) * 100 : 0;
+            return `
+              <div class="rank-item ${faded ? 'faded' : ''}">
+                <div class="rank-main">
+                  <div class="rank-name">
+                    <span class="rank-number">${medal ? `#${medal}` : (rankIdx ? `#${rankIdx}` : '—')}</span>
+                    <span class="rank-product" style="${isHl ? `color:${p.color};border-left-color:${p.color}` : ''}">${escapeHtml(p.name)}</span>
+                  </div>
+                  <span class="rank-value" style="${isHl ? `color:${p.color}` : ''}">${escapeHtml(item.display)}</span>
+                </div>
+                <div class="bar">
+                  <div class="bar-fill" style="width:${barWidth}%;background:${isHl ? p.color : rgba(p.color, 0.70)}"></div>
+                  ${avgLine > 0 && item.value != null ? `<div class="avg-line" style="left:${avgLine}%"></div>` : ''}
+                </div>
+              </div>
+            `;
+          }).join('')}
+          ${values.length ? `<div class="avg-note"><span class="avg-mark"></span>平均值 ${average.toFixed(col.unit === '' ? 2 : 1)}${escapeHtml(col.unit || '')}</div>` : ''}
+          ${refProduct && refValue != null ? renderRefRank(refProduct, refValue, refDisplay, absMax, anyHl) : ''}
+        </div>
+      `;
+    }
+
+    function renderRefRank(refProduct, refValue, refDisplay, absMax, anyHl) {
+      const faded = state.focusMode && anyHl && !state.highlighted.includes(refProduct.id);
+      const width = absMax ? Math.max(0, (refValue / absMax) * 100) : 0;
+      return `
+        <div class="ref-block ${faded ? 'faded' : ''}">
+          <div class="ref-label">参考（不参与排名）</div>
+          <div class="rank-main">
+            <div class="rank-name">
+              <span class="rank-number">参考</span>
+              <span class="rank-product" style="color:var(--muted);border-left-style:dashed;border-left-color:var(--dim)">${escapeHtml(refProduct.name)}</span>
+            </div>
+            <span class="rank-value" style="color:var(--muted)">${escapeHtml(refDisplay)}</span>
+          </div>
+          <div class="bar">
+            <div class="bar-fill" style="width:${width}%;background:var(--dim);opacity:0.65"></div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderFooter() {
+      return `<div class="footer">数据来源：7 款控制器实测。九号 M395C 原厂作为「不改装」基准，不参与改装产品的排名比较。</div>`;
+    }
+
+    window.app = {
+      toggleDark() {
+        setAndRender(() => { state.dark = !state.dark; }, true);
+      },
+      toggleFocus() {
+        setAndRender(() => { state.focusMode = !state.focusMode; }, true);
+      },
+      toggleBadges() {
+        setAndRender(() => { state.showBadges = !state.showBadges; }, true);
+      },
+      toggleRankIdx() {
+        setAndRender(() => { state.showRankIdx = !state.showRankIdx; }, true);
+      },
+      enterRecord() {
+        setAndRender(() => { state.recordMode = true; }, true);
+      },
+      exitRecord() {
+        setAndRender(() => { state.recordMode = false; }, true);
+      },
+      toggleHighlight(id) {
+        setAndRender(() => {
+          state.highlighted = state.highlighted.includes(id)
+            ? state.highlighted.filter(x => x !== id)
+            : [...state.highlighted, id];
+        }, true);
+      },
+      clearHighlights() {
+        setAndRender(() => { state.highlighted = []; }, true);
+      },
+      scrollToSection(id) {
+        state.activeSection = id;
+        saveState();
+        render();
+        requestAnimationFrame(() => {
+          document.getElementById(`sec-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      },
+      toggleColPicker(id) {
+        setAndRender(() => {
+          const sec = ensureSectionState(id);
+          sec.showColPicker = !sec.showColPicker;
+        }, true);
+      },
+      toggleColumn(id, key) {
+        setAndRender(() => {
+          const sec = ensureSectionState(id);
+          sec.hiddenCols = sec.hiddenCols.includes(key)
+            ? sec.hiddenCols.filter(x => x !== key)
+            : [...sec.hiddenCols, key];
+          const cols = visibleCols(id);
+          if (!cols.some(c => c.key === sec.sortKey)) {
+            const next = cols.find(c => c.rankable);
+            sec.sortKey = next ? next.key : null;
+            sec.sortAsc = null;
+          }
+        }, true);
+      },
+      setView(id, view) {
+        setAndRender(() => { ensureSectionState(id).view = view; }, true);
+      },
+      setSortKey(id, key) {
+        setAndRender(() => {
+          const sec = ensureSectionState(id);
+          sec.sortKey = key;
+          sec.sortAsc = null;
+        }, true);
+      },
+      toggleSort(id) {
+        setAndRender(() => {
+          const sec = ensureSectionState(id);
+          const { isAsc } = currentSort(id);
+          sec.sortAsc = !isAsc;
+        }, true);
+      },
+      sortBy(id, key) {
+        setAndRender(() => {
+          const sec = ensureSectionState(id);
+          const col = SEC_CONFIG[id].columns.find(c => c.key === key);
+          if (!col || !col.rankable) return;
+          const { isAsc } = currentSort(id);
+          if (sec.sortKey === key) {
+            sec.sortAsc = !isAsc;
+          } else {
+            sec.sortKey = key;
+            sec.sortAsc = null;
+          }
+        }, true);
+      },
+      exportImage() {
+        alert('这个 HTML 是纯本地文件。请使用系统截图功能截取当前区块。');
+      },
+    };
+
+    render();
+  </script>
+</body>
+</html>
