@@ -1,5 +1,7 @@
 <view class="app {{dark ? '' : 'light'}}">
-  <view class="watermark">小拓子横评</view>
+  <view class="watermark">
+    <text tt:for="{{watermarks}}" tt:key="id" class="watermark-item">{{item.text}}</text>
+  </view>
 
   <view class="topbar">
     <view class="topline">
@@ -50,23 +52,13 @@
       <view class="section-head">
         <view class="title-group">
           <text class="section-title">{{section.title}}</text>
-          <button class="icon-btn {{activeInfo === section.id ? 'active' : ''}}" data-id="{{section.id}}" bindtap="toggleInfo" aria-label="模块说明">
+          <button class="section-icon-btn {{activeInfo === section.id ? 'active' : ''}}" data-id="{{section.id}}" bindtap="toggleInfo" aria-label="模块说明">
             <image class="icon-img" src="/assets/icons/info.svg" mode="aspectFit" />
           </button>
         </view>
-        <button class="icon-btn {{section.showColPicker ? 'active' : ''}}" data-id="{{section.id}}" bindtap="toggleColPicker" aria-label="显示列">
+        <button class="section-icon-btn {{section.showColPicker ? 'active' : ''}}" data-id="{{section.id}}" bindtap="toggleColPicker" aria-label="显示列">
           <image class="icon-img" src="/assets/icons/columns.svg" mode="aspectFit" />
         </button>
-      </view>
-
-      <view tt:if="{{activeInfo === section.id}}" class="info-pop">
-        <view class="info-pop-head">
-          <text>{{section.title}}说明</text>
-          <button class="icon-btn" bindtap="closeInfo" aria-label="关闭说明">
-            <image class="icon-img" src="/assets/icons/close.svg" mode="aspectFit" />
-          </button>
-        </view>
-        <text class="info-pop-body">{{section.info}}</text>
       </view>
 
       <text tt:if="{{section.note}}" class="note">{{section.note}}</text>
@@ -91,11 +83,11 @@
       <view tt:if="{{section.hasRankable}}" class="view-row">
         <view class="seg">
           <button class="seg-btn {{section.view === 'table' ? 'active' : ''}}" data-id="{{section.id}}" data-view="table" bindtap="setView">
-            <image class="inline-img" src="/assets/icons/table.svg" mode="aspectFit" />
+            <image class="inline-img" src="{{section.view === 'table' ? '/assets/icons/table-active.svg' : '/assets/icons/table.svg'}}" mode="aspectFit" />
             <text>表格</text>
           </button>
           <button class="seg-btn {{section.view === 'rank' ? 'active' : ''}}" data-id="{{section.id}}" data-view="rank" bindtap="setView">
-            <image class="inline-img" src="/assets/icons/trophy.svg" mode="aspectFit" />
+            <image class="inline-img" src="{{section.view === 'rank' ? '/assets/icons/trophy-active.svg' : '/assets/icons/trophy.svg'}}" mode="aspectFit" />
             <text>排行榜</text>
           </button>
         </view>
@@ -145,7 +137,7 @@
                 <text>{{row.name}}</text>
               </view>
             </view>
-            <view tt:for="{{row.cells}}" tt:for-item="cell" tt:key="key" class="cell data-cell {{cell.tone}} {{row.highlighted ? 'strong' : ''}}">
+            <view tt:for="{{row.cells}}" tt:for-item="cell" tt:key="key" class="cell data-cell {{cell.longText ? 'long' : ''}} {{cell.tone}} {{row.highlighted ? 'strong' : ''}}">
               <text>{{cell.display}}</text>
               <text tt:if="{{cell.best}}" class="best-badge">☆ 最佳</text>
             </view>
@@ -172,7 +164,7 @@
           <text>{{section.averageText}}</text>
         </view>
         <view tt:if="{{section.refRank}}" class="ref-block">
-          <text class="ref-label">参考（不参与排名）</text>
+          <text class="ref-label">参考（不参与排序）</text>
           <view class="rank-main">
             <view class="rank-name">
               <text class="rank-number">参考</text>
@@ -187,6 +179,27 @@
       </view>
     </view>
 
-    <view class="footer">数据来源：7 款控制器实测。九号 M395C 原厂作为「不改装」基准，不参与改装产品的排名比较。</view>
+    <view class="footer">数据来源：7 款控制器实测。九号 M395C 原厂作为参考基线，不参与对比控制器的排序比较。</view>
   </scroll-view>
+
+  <view tt:if="{{activeInfoModal}}" class="modal-layer">
+    <view class="modal-backdrop" bindtap="closeInfo"></view>
+    <view class="info-modal">
+      <view class="info-modal-head">
+        <text class="info-modal-title">{{activeInfoModal.title}}</text>
+        <button class="modal-close" bindtap="closeInfo" aria-label="关闭说明">
+          <image class="icon-img" src="/assets/icons/close.svg" mode="aspectFit" />
+        </button>
+      </view>
+      <scroll-view class="info-modal-body" scroll-y enhanced show-scrollbar="{{false}}">
+        <text class="info-intro">{{activeInfoModal.intro}}</text>
+        <view class="info-point" tt:for="{{activeInfoModal.points}}" tt:key="*this">
+          <text class="info-dot"></text>
+          <text class="info-point-text">{{item}}</text>
+        </view>
+        <text tt:if="{{activeInfoModal.note}}" class="info-note">{{activeInfoModal.note}}</text>
+      </scroll-view>
+      <button class="modal-ok" bindtap="closeInfo">我知道了</button>
+    </view>
+  </view>
 </view>

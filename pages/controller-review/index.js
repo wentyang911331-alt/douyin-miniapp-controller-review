@@ -1,14 +1,29 @@
-const PAGE_TITLE = '2026 年春季控制线横屏对比手册';
+const PAGE_TITLE = '2026年春季260级控制器对比手册';
 const STORAGE_KEY = 'ctrl-review-miniapp-v1';
+const WATERMARK_TEXT = '小拓子';
+const WATERMARK_ITEMS = Array.from({ length: 72 }).map(function(_, i) {
+  return { id: i, text: WATERMARK_TEXT };
+});
+
+const THEME = {
+  dark: {
+    navBg: '#171F2E',
+    navFront: '#ffffff'
+  },
+  light: {
+    navBg: '#FFFFFF',
+    navFront: '#000000'
+  }
+};
 
 const PRODUCTS = [
-  { id: 'yanxin', name: '雁鑫 X300', short: '雁鑫', isRef: false, color: '#22d3ee' },
-  { id: 'spd', name: 'SPD 72260S', short: 'SPD', isRef: false, color: '#f59e0b' },
-  { id: 'lingbo', name: '凌博 E260 Pro Max', short: '凌博', isRef: false, color: '#10b981' },
-  { id: 'apt', name: 'APT F300', short: 'APT', isRef: false, color: '#ec4899' },
-  { id: 'zhike', name: '智科 72260', short: '智科', isRef: false, color: '#a855f7' },
-  { id: 'datai', name: '大泰 72260', short: '大泰', isRef: false, color: '#ef4444' },
-  { id: 'ninebot', name: '九号 M395C 原厂', short: '九号原厂', isRef: true, color: '#6b7280' }
+  { id: 'yanxin', name: '雁鑫 X300', short: '雁鑫', isRef: false, color: '#6D7890' },
+  { id: 'spd', name: 'SPD 72260S', short: 'SPD', isRef: false, color: '#727B8E' },
+  { id: 'lingbo', name: '凌博 E260 Pro Max', short: '凌博', isRef: false, color: '#6E788A' },
+  { id: 'apt', name: 'APT F300', short: 'APT', isRef: false, color: '#747D8D' },
+  { id: 'zhike', name: '智科 72260', short: '智科', isRef: false, color: '#4E67E8' },
+  { id: 'datai', name: '大泰 72260', short: '大泰', isRef: false, color: '#858D9A' },
+  { id: 'ninebot', name: '九号 M395C 原厂', short: '九号原厂', isRef: true, color: '#687385' }
 ];
 
 const HARDWARE = {
@@ -72,18 +87,72 @@ const ACCEL = {
 };
 
 const SECTION_INFO = {
-  hardware: '硬件规格用于横向确认价格、电流、电压和协议边界。带“越大/越小越好”的数值项参与排序；最低电压、水冷、协议等只作为适配参考。九号原厂为基准样本，不计入改装控制器排名。',
-  software: '本模块记录连接、升级、调节项说明和辅助功能表现，偏向实际使用体验。软件评分与标注清晰度为人工整理口径，不和电流、加速等性能项混排；“最佳”只标出本表内明确优势项。',
-  handling: '模拟跟车关注低速启停、跟车补油和电门开合的主观手感。延迟、线性度、空行程用于描述骑行可控性，不等同于绝对性能排名；九号原厂仅提供原车参照。',
-  thermal: '10km 温控限流以起步后 60 秒内峰值电流作为基线，记录首次持续跌破各比例的时刻。越晚跌破、最终保持越高代表热稳定性更好；断电或缺失值会排在有效数据之后。',
-  stable: '稳定输出区从车辆起步到首次跌破 90% 基线截取，凌博因全程未限流按 10km 全段计算。耗电项按同一区间归一化比较，里程缺失或参考样本不参与有效排名。',
-  accel: '加速性能按每项 3 次测试平均值展示，秒数类越低越好，极速越高越好。九号原厂受 40A 硬件限制，部分加速项未测，只作为 500m 参考边界。'
+  hardware: {
+    title: '硬件规格怎么看',
+    intro: '这一页主要帮你先判断“能不能用、值不值、余量够不够”。',
+    points: [
+      '母线电流可以理解为电池侧能给出去的总力气，通常越高越容易支撑高速和持续输出。',
+      '相线电流更像电机起步和低速爆发时用到的力，数值高不等于一定更快，还要看调校、散热和保护策略。',
+      '电压范围决定能不能适配你的电池平台；协议决定能不能和车上的仪表、蓝牙、刹车等功能正常配合。'
+    ],
+    note: '九号原厂作为参考基线，不参与对比控制器排名。'
+  },
+  software: {
+    title: '软件和辅助功能怎么看',
+    intro: '这一页看的是日常用起来省不省心，不只看性能数字。',
+    points: [
+      '蓝牙连接和 OTA 升级代表后期调参、更新和排查问题是否方便。',
+      '调节项标注越清楚，新手越不容易误改关键参数。',
+      '巡航、制动巡航、驻车刹车灯属于辅助功能，重点看是否稳定可用，以及和原车逻辑是否匹配。'
+    ],
+    note: '软件评分是基于本次测试体验整理，不能替代长期使用稳定性结论。'
+  },
+  handling: {
+    title: '骑行手感怎么看',
+    intro: '这里关注的是低速跟车、起步补油和电门开合时好不好控制。',
+    points: [
+      '电门延迟越小，给油后的反应越直接，但过于激进也可能不好掌控。',
+      '线性度越好，电门从小到大的输出越顺，不容易突然窜车。',
+      '空行程太大容易觉得“拧了没反应”，太小又可能低速紧张。'
+    ],
+    note: '手感带有主观体验，本页用于横向参考，不等同于绝对性能排名。'
+  },
+  thermal: {
+    title: '温控限流怎么看',
+    intro: '温控限流可以理解为控制器热起来以后会不会主动收力。',
+    points: [
+      '基线电流是起步后前 60 秒内的高输出参考，用来判断后面掉了多少。',
+      '越晚跌破 90%、80%、60%，说明高输出能保持得越久。',
+      '最终保持比例越高，代表热起来之后还剩多少持续输出能力。'
+    ],
+    note: '几乎不限流不一定永远更好，还要结合温度、保护策略和长期可靠性看。'
+  },
+  stable: {
+    title: '稳定输出和耗电怎么看',
+    intro: '这一页把不同控制器放在尽量接近的输出区间里比较能耗。',
+    points: [
+      'Wh/km 越低，代表跑同样距离耗电更少，通常更省电。',
+      'km/Ah 越高，代表同样电量能跑得更远。',
+      '平均功率和平均电流能反映这段测试里实际输出强度，不能单独当作续航结论。'
+    ],
+    note: '里程缺失或参考样本只作辅助观察，不参与有效排名。'
+  },
+  accel: {
+    title: '加速测试怎么看',
+    intro: '加速页关注的是不同速度段的响应和后段能力。',
+    points: [
+      '0-30 更偏起步和低速响应，适合看日常起步是否轻快。',
+      '0-60 和 40-70 更能看中后段持续加速能力。',
+      '500m 耗时越短、尾速越高，通常说明整段加速能力更强。'
+    ],
+    note: '每项取 3 次测试平均值；未测项目只作为边界参考，不参与对应排名。'
+  }
 };
 
 const SEC_CONFIG = {
   hardware: {
-    title: '① 硬件规格对比',
-    mark: '①',
+    title: '1. 硬件规格对比',
+    mark: '1. 硬件',
     data: HARDWARE,
     columns: [
       { key: 'price', label: '价格', type: 'number', unit: '元', better: 'low', rankable: true },
@@ -96,8 +165,8 @@ const SEC_CONFIG = {
     ]
   },
   software: {
-    title: '② 交互软件与辅助功能',
-    mark: '②',
+    title: '2. 交互软件与辅助功能',
+    mark: '2. 软件',
     data: SOFTWARE,
     colorize: true,
     columns: [
@@ -111,8 +180,8 @@ const SEC_CONFIG = {
     ]
   },
   handling: {
-    title: '③ 日常骑行手感（模拟跟车）',
-    mark: '③',
+    title: '3. 日常骑行手感（模拟跟车）',
+    mark: '3. 手感',
     data: HANDLING,
     colorize: true,
     columns: [
@@ -122,8 +191,8 @@ const SEC_CONFIG = {
     ]
   },
   thermal: {
-    title: '④ 10km 温控限流路径',
-    mark: '④',
+    title: '4. 10km 温控限流路径',
+    mark: '4. 温控',
     data: THERMAL,
     note: '基线 = 起步后前 60 秒内峰值电流滚动最大值。跌破 = 包络首次持续低于基线百分比的时刻。',
     columns: [
@@ -137,8 +206,8 @@ const SEC_CONFIG = {
     ]
   },
   stable: {
-    title: '⑤ 稳定输出区耗电对比',
-    mark: '⑤',
+    title: '5. 稳定输出区耗电对比',
+    mark: '5. 耗电',
     data: STABLE,
     note: '从车辆起步（电流首次 > 5A）至首次跌破 90% 基线的区间。凌博全程未限流即全段 10km。',
     columns: [
@@ -153,8 +222,8 @@ const SEC_CONFIG = {
     ]
   },
   accel: {
-    title: '⑥ 加速性能横评',
-    mark: '⑥',
+    title: '6. 加速性能横评',
+    mark: '6. 加速',
     data: ACCEL,
     note: '每项取 3 次测试平均值。九号原厂受 40A 硬件限制未执行 0-30/0-60/40-70，仅作参考。',
     columns: [
@@ -328,6 +397,7 @@ function buildRows(cfg, cols, sortCol, isAsc, state) {
         return {
           key: c.key,
           display: display,
+          longText: String(display).length > 9 || c.key === 'parkLight',
           tone: cfg.colorize ? textTone(display) : '',
           best: state.showBadges && bestMap[c.key] === p.id && !p.isRef
         };
@@ -414,7 +484,10 @@ function buildSections(state) {
       id: id,
       mark: cfg.mark,
       title: cfg.title,
-      info: SECTION_INFO[id],
+      infoTitle: SECTION_INFO[id].title,
+      infoIntro: SECTION_INFO[id].intro,
+      infoPoints: SECTION_INFO[id].points,
+      infoNote: SECTION_INFO[id].note,
       note: cfg.note || '',
       view: sec.view,
       sortKey: sort.col ? sort.col.key : '',
@@ -427,7 +500,7 @@ function buildSections(state) {
       }),
       visibleColumns: visibleColumns,
       rankableColumns: rankableColumns,
-      tableWidth: 220 + cols.length * 190,
+      tableWidth: 250 + cols.length * 210,
       rows: buildRows(cfg, cols, sort.col, sort.isAsc, state),
       rankItems: rank.rankItems,
       averageText: rank.averageText,
@@ -444,6 +517,18 @@ function productsForState(highlighted) {
       chipStyle: on ? 'border-color:' + p.color + ';background:' + rgba(p.color, 0.14) + ';color:' + p.color + ';' : ''
     });
   });
+}
+
+function activeInfoFor(id) {
+  if (!id || SECTION_IDS.indexOf(id) < 0) return null;
+  const info = SECTION_INFO[id];
+  return {
+    id: id,
+    title: info.title,
+    intro: info.intro,
+    points: info.points,
+    note: info.note
+  };
 }
 
 function readStorage() {
@@ -473,6 +558,7 @@ function writeStorage(state) {
 Page({
   data: {
     pageTitle: PAGE_TITLE,
+    watermarks: WATERMARK_ITEMS,
     dark: true,
     highlighted: [],
     highlightedCountText: '',
@@ -480,6 +566,7 @@ Page({
     showRankIdx: true,
     activeSection: 'hardware',
     activeInfo: null,
+    activeInfoModal: null,
     scrollInto: '',
     products: [],
     sections: [],
@@ -489,6 +576,22 @@ Page({
   onLoad() {
     const saved = normalizeSaved(readStorage());
     this.applyState(saved, false);
+    this.syncNavigationBar(saved.dark);
+  },
+
+  syncNavigationBar(dark) {
+    try {
+      if (typeof tt !== 'undefined' && tt.setNavigationBarTitle) {
+        tt.setNavigationBarTitle({ title: PAGE_TITLE });
+      }
+      if (typeof tt !== 'undefined' && tt.setNavigationBarColor) {
+        const theme = dark ? THEME.dark : THEME.light;
+        tt.setNavigationBarColor({
+          frontColor: theme.navFront,
+          backgroundColor: theme.navBg
+        });
+      }
+    } catch (e) {}
   },
 
   applyState(next, shouldSave) {
@@ -501,6 +604,7 @@ Page({
       showRankIdx: state.showRankIdx,
       activeSection: state.activeSection,
       activeInfo: next.activeInfo || null,
+      activeInfoModal: activeInfoFor(next.activeInfo),
       products: productsForState(state.highlighted),
       sections: buildSections(state),
       sectionState: state.sections
@@ -528,9 +632,11 @@ Page({
   },
 
   toggleDark() {
+    const nextDark = !this.data.dark;
     this.updateState(function(state) {
-      state.dark = !state.dark;
+      state.dark = nextDark;
     });
+    this.syncNavigationBar(nextDark);
   },
 
   toggleBadges() {
