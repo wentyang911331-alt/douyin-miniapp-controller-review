@@ -4,9 +4,9 @@
 
 ## 当前版本
 
-- 版本号：1.0.0
-- Git 标签：`v1.0.0`
-- 当前状态：需求与协作文档落地，原始 HTML 尚未进入实现修改阶段
+- 版本号：1.1.0
+- Git 标签：`v1.1.0`
+- 当前状态：完成标题、水印、说明小浮窗、圆角图标体系和功能移除的页面实现
 
 ## 重要文件
 
@@ -15,6 +15,8 @@
 - `docs/REQUIREMENTS.md`：需求文档
 - `docs/AGENT_COLLABORATION.md`：子代理协作文档
 - `docs/CONTEXT_HANDOFF.md`：上下文交接文档
+- `docs/UI_ICON_SYSTEM.md`：圆角图标体系方案
+- `docs/ui-icon-preview.html`：圆角图标预览页
 - `CHANGELOG.md`：版本变更记录
 - `VERSION`：当前版本号
 
@@ -29,4 +31,3 @@
 - 推送代码和标签到 GitHub
 
 需要回滚时，优先从 GitHub 拉取对应标签版本。
-

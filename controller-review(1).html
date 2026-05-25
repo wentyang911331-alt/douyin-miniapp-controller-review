@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>控制器横评 · 对比手册</title>
+  <title>2026 年春季控制线横屏对比手册</title>
   <style>
     :root {
       color-scheme: dark;
@@ -55,6 +55,22 @@
       letter-spacing: 0;
     }
 
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.055;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='210' height='150' viewBox='0 0 210 150'%3E%3Cg transform='translate(20 95) rotate(-24)'%3E%3Ctext x='0' y='0' fill='%23ffffff' font-size='18' font-weight='700' font-family='Arial, sans-serif'%3E%E5%B0%8F%E6%8B%93%E5%AD%90%E6%A8%AA%E8%AF%84%3C/text%3E%3C/g%3E%3C/svg%3E");
+      background-size: 210px 150px;
+    }
+
+    body.light::before {
+      opacity: 0.06;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='210' height='150' viewBox='0 0 210 150'%3E%3Cg transform='translate(20 95) rotate(-24)'%3E%3Ctext x='0' y='0' fill='%230f172a' font-size='18' font-weight='700' font-family='Arial, sans-serif'%3E%E5%B0%8F%E6%8B%93%E5%AD%90%E6%A8%AA%E8%AF%84%3C/text%3E%3C/g%3E%3C/svg%3E");
+    }
+
     button, select {
       font-family: inherit;
       letter-spacing: 0;
@@ -71,6 +87,7 @@
       min-height: 100vh;
       padding-bottom: 40px;
       position: relative;
+      z-index: 1;
     }
 
     .topbar {
@@ -87,14 +104,15 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 8px;
       margin-bottom: 10px;
     }
 
     .title {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
-      white-space: nowrap;
+      line-height: 1.25;
+      min-width: 0;
     }
 
     .tool-row,
@@ -114,7 +132,8 @@
     .icon-btn {
       width: 30px;
       height: 30px;
-      border-radius: 7px;
+      min-width: 30px;
+      border-radius: 8px;
       border: 1px solid var(--border);
       color: var(--text);
       background: var(--panel-2);
@@ -124,6 +143,43 @@
       font-size: 13px;
       font-weight: 800;
       line-height: 1;
+    }
+
+    .icon-svg {
+      width: 20px;
+      height: 20px;
+      display: block;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .inline-icon {
+      width: 13px;
+      height: 13px;
+      display: inline-block;
+      vertical-align: -2px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .clear-btn .icon-svg,
+    th .icon-svg,
+    .seg-btn .icon-svg,
+    .sort-btn .icon-svg {
+      width: 13px;
+      height: 13px;
+      display: inline-block;
+      vertical-align: -2px;
+    }
+
+    th .icon-svg {
+      margin-left: 3px;
     }
 
     .icon-btn.active {
@@ -202,20 +258,6 @@
       border-style: dashed;
     }
 
-    .record-exit {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      z-index: 100;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: var(--panel);
-      color: var(--text);
-      padding: 6px 10px;
-      font-size: 11px;
-      font-weight: 700;
-    }
-
     .content {
       padding: 10px 10px 0;
     }
@@ -223,6 +265,7 @@
     .section {
       margin-bottom: 20px;
       scroll-margin-top: 180px;
+      position: relative;
     }
 
     .section-head {
@@ -238,6 +281,40 @@
       font-size: 14px;
       font-weight: 800;
       line-height: 1.3;
+    }
+
+    .title-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .info-pop {
+      margin: -2px 0 8px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+    }
+
+    .info-pop-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .info-pop-body {
+      margin: 0;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.6;
     }
 
     .note {
@@ -437,8 +514,10 @@
 
     .best-badge {
       margin-left: 4px;
-      padding: 1px 4px;
+      gap: 2px;
+      padding: 1px 5px 1px 4px;
       font-size: 8px;
+      border-radius: 6px;
     }
 
     .good { color: var(--success); }
@@ -559,24 +638,8 @@
       text-align: center;
     }
 
-    .faded {
-      opacity: 0.25;
-    }
-
     .hidden {
       display: none !important;
-    }
-
-    body.record .app {
-      max-width: 400px;
-    }
-
-    body.record .content {
-      font-size: 16px;
-    }
-
-    body.record .topbar {
-      display: none;
     }
   </style>
 </head>
@@ -735,18 +798,40 @@
       },
     };
 
+    const PAGE_TITLE = '2026 年春季控制线横屏对比手册';
+    const SECTION_INFO = {
+      hardware: '硬件规格用于横向确认价格、电流、电压和协议边界。带“越大/越小越好”的数值项参与排序；最低电压、水冷、协议等只作为适配参考。九号原厂为基准样本，不计入改装控制器排名。',
+      software: '本模块记录连接、升级、调节项说明和辅助功能表现，偏向实际使用体验。软件评分与标注清晰度为人工整理口径，不和电流、加速等性能项混排；“最佳”只标出本表内明确优势项。',
+      handling: '模拟跟车关注低速启停、跟车补油和电门开合的主观手感。延迟、线性度、空行程用于描述骑行可控性，不等同于绝对性能排名；九号原厂仅提供原车参照。',
+      thermal: '10km 温控限流以起步后 60 秒内峰值电流作为基线，记录首次持续跌破各比例的时刻。越晚跌破、最终保持越高代表热稳定性更好；断电或缺失值会排在有效数据之后。',
+      stable: '稳定输出区从车辆起步到首次跌破 90% 基线截取，凌博因全程未限流按 10km 全段计算。耗电项按同一区间归一化比较，里程缺失或参考样本不参与有效排名。',
+      accel: '加速性能按每项 3 次测试平均值展示，秒数类越低越好，极速越高越好。九号原厂受 40A 硬件限制，部分加速项未测，只作为 500m 参考边界。',
+    };
+
     const STORAGE_KEY = 'ctrl-review-html-v1';
     const appRoot = document.getElementById('app');
-    const icon = { theme: '◐', focus: '⌖', badge: '☆', rank: '#', video: '▣', columns: '▥', download: '⇩', table: '▦', trophy: '▲', up: '↑', down: '↓', sort: '↕', close: '×' };
+    const icon = {
+      theme: svgIcon('<path d="M8.5 2.8a6.2 6.2 0 1 0 8.7 8.7 5.5 5.5 0 0 1-8.7-8.7Z"/><path d="M4 4.5h1.8M3.2 8.2h1.3M14.2 16h1.6"/>'),
+      badge: svgIcon('<path d="m10 2.8 1.8 3.7 4.1.6-3 2.9.7 4.1-3.6-1.9-3.6 1.9.7-4.1-3-2.9 4.1-.6L10 2.8Z"/><path d="M6.8 16.4h6.4"/>'),
+      rank: svgIcon('<rect x="4" y="4" width="12" height="12" rx="3"/><path d="M7.2 8h5.6M7.2 12h5.6M13.8 7.2v6.4"/>'),
+      columns: svgIcon('<rect x="3" y="4" width="3.8" height="12" rx="1.2"/><rect x="8.1" y="4" width="3.8" height="12" rx="1.2"/><rect x="13.2" y="4" width="3.8" height="12" rx="1.2"/>'),
+      info: svgIcon('<rect x="4" y="4" width="12" height="12" rx="4"/><path d="M10 9v4"/><path d="M10 6.8h.01"/>'),
+      close: svgIcon('<rect x="4" y="4" width="12" height="12" rx="4"/><path d="m8 8 4 4M12 8l-4 4"/>'),
+      table: svgIcon('<rect x="3.5" y="4.5" width="13" height="11" rx="2"/><path d="M3.5 8.2h13M8 4.5v11M12 4.5v11"/>'),
+      trophy: svgIcon('<path d="M7 4h6v3.8a3 3 0 0 1-6 0V4Z"/><path d="M7 5.5H4.8v1.2A2.3 2.3 0 0 0 7 9M13 5.5h2.2v1.2A2.3 2.3 0 0 1 13 9"/><path d="M10 11v3M7.5 16h5"/>'),
+      up: svgIcon('<path d="M10 4v12"/><path d="m5.8 8.2 4.2-4.2 4.2 4.2"/>'),
+      down: svgIcon('<path d="M10 4v12"/><path d="m5.8 11.8 4.2 4.2 4.2-4.2"/>'),
+      sort: svgIcon('<path d="M7 4v11"/><path d="m4.8 6.2 2.2-2.2 2.2 2.2"/><path d="M13 16V5"/><path d="m10.8 13.8 2.2 2.2 2.2-2.2"/>'),
+      bestMark: '<svg class="inline-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="m10 3.2 1.5 3.1 3.5.5-2.5 2.4.6 3.5-3.1-1.6-3.1 1.6.6-3.5L5 6.8l3.5-.5L10 3.2Z"/></svg>',
+    };
 
     const state = {
       dark: true,
       highlighted: [],
-      focusMode: false,
-      recordMode: false,
       showBadges: true,
       showRankIdx: true,
       activeSection: 'hardware',
+      activeInfo: null,
       sections: {},
       ...loadState(),
     };
@@ -754,7 +839,15 @@
     function loadState() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        return raw ? JSON.parse(raw) : {};
+        const saved = raw ? JSON.parse(raw) : {};
+        return {
+          dark: saved.dark !== undefined ? saved.dark : true,
+          highlighted: Array.isArray(saved.highlighted) ? saved.highlighted : [],
+          showBadges: saved.showBadges !== undefined ? saved.showBadges : true,
+          showRankIdx: saved.showRankIdx !== undefined ? saved.showRankIdx : true,
+          activeSection: saved.activeSection || 'hardware',
+          sections: saved.sections && typeof saved.sections === 'object' ? saved.sections : {},
+        };
       } catch {
         return {};
       }
@@ -764,7 +857,6 @@
       const toSave = {
         dark: state.dark,
         highlighted: state.highlighted,
-        focusMode: state.focusMode,
         showBadges: state.showBadges,
         showRankIdx: state.showRankIdx,
         activeSection: state.activeSection,
@@ -822,6 +914,10 @@
         .replaceAll("'", '&#39;');
     }
 
+    function svgIcon(paths) {
+      return `<svg class="icon-svg" viewBox="0 0 20 20" aria-hidden="true">${paths}</svg>`;
+    }
+
     function hexToRgb(hex) {
       const clean = hex.replace('#', '');
       return {
@@ -860,22 +956,18 @@
 
     function render() {
       document.body.classList.toggle('light', !state.dark);
-      document.body.classList.toggle('record', state.recordMode);
-      appRoot.innerHTML = `${renderTopbar()}${state.recordMode ? renderRecordExit() : ''}<div class="content">${Object.keys(SEC_CONFIG).map(renderSection).join('')}${renderFooter()}</div>`;
+      appRoot.innerHTML = `${renderTopbar()}<div class="content">${Object.keys(SEC_CONFIG).map(renderSection).join('')}${renderFooter()}</div>`;
     }
 
     function renderTopbar() {
-      if (state.recordMode) return '';
       return `
         <div class="topbar">
           <div class="topline">
-            <div class="title">控制器横评 · 对比手册</div>
+            <div class="title">${escapeHtml(PAGE_TITLE)}</div>
             <div class="tool-row">
               ${toolButton('toggleDark', icon.theme, '主题', false)}
-              ${toolButton('toggleFocus', icon.focus, '聚焦模式', state.focusMode)}
               ${toolButton('toggleBadges', icon.badge, '最佳徽章', state.showBadges)}
               ${toolButton('toggleRankIdx', icon.rank, '排名角标', state.showRankIdx)}
-              ${toolButton('enterRecord', icon.video, '录制模式', false)}
             </div>
           </div>
           <div class="nav-row">
@@ -900,10 +992,6 @@
       return `<button class="icon-btn ${active ? 'active' : ''}" title="${escapeHtml(title)}" aria-label="${escapeHtml(title)}" onclick="app.${action}()">${label}</button>`;
     }
 
-    function renderRecordExit() {
-      return `<button class="record-exit" onclick="app.exitRecord()">退出录制</button>`;
-    }
-
     function renderSection(id) {
       const cfg = SEC_CONFIG[id];
       const sec = ensureSectionState(id);
@@ -913,17 +1001,33 @@
       return `
         <section id="sec-${id}" class="section">
           <div class="section-head">
-            <div class="section-title">${escapeHtml(cfg.title)}</div>
+            <div class="title-group">
+              <div class="section-title">${escapeHtml(cfg.title)}</div>
+              <button class="icon-btn ${state.activeInfo === id ? 'active' : ''}" title="模块说明" aria-label="${escapeHtml(cfg.title)}说明" onclick="app.toggleInfo('${id}')">${icon.info}</button>
+            </div>
             <div class="section-actions">
               <button class="icon-btn ${sec.showColPicker ? 'active' : ''}" title="显示列" aria-label="显示列" onclick="app.toggleColPicker('${id}')">${icon.columns}</button>
-              <button class="icon-btn" title="截图" aria-label="截图" onclick="app.exportImage()">${icon.download}</button>
             </div>
           </div>
+          ${state.activeInfo === id ? renderInfoPopover(id) : ''}
           ${cfg.note ? `<p class="note">${escapeHtml(cfg.note)}</p>` : ''}
           ${sec.showColPicker ? renderColPanel(id) : ''}
           ${firstRankable ? renderViewControls(id, cols, col, isAsc) : ''}
           ${sec.view === 'rank' ? renderRank(id, col, isAsc) : renderTable(id, cols, col, isAsc)}
         </section>
+      `;
+    }
+
+    function renderInfoPopover(id) {
+      const cfg = SEC_CONFIG[id];
+      return `
+        <div class="info-pop" role="dialog" aria-label="${escapeHtml(cfg.title)}说明">
+          <div class="info-pop-head">
+            <span>${escapeHtml(cfg.title)}说明</span>
+            <button class="icon-btn" title="关闭" aria-label="关闭说明" onclick="app.closeInfo()">${icon.close}</button>
+          </div>
+          <p class="info-pop-body">${escapeHtml(SECTION_INFO[id])}</p>
+        </div>
       `;
     }
 
@@ -968,7 +1072,6 @@
       const bestMap = buildBestMap(cfg, cols);
       const sortedProducts = sortProducts(cfg, cols, sortCol, isAsc);
       const rankIndexMap = buildRankIndexMap(cfg, cols, sortCol);
-      const anyHl = state.highlighted.length > 0;
 
       return `
         <div class="table-card">
@@ -986,7 +1089,7 @@
                 </tr>
               </thead>
               <tbody>
-                ${sortedProducts.map(p => renderTableRow(cfg, cols, p, bestMap, rankIndexMap, anyHl)).join('')}
+                ${sortedProducts.map(p => renderTableRow(cfg, cols, p, bestMap, rankIndexMap)).join('')}
               </tbody>
             </table>
           </div>
@@ -994,9 +1097,8 @@
       `;
     }
 
-    function renderTableRow(cfg, cols, p, bestMap, rankIndexMap, anyHl) {
+    function renderTableRow(cfg, cols, p, bestMap, rankIndexMap) {
       const isHl = state.highlighted.includes(p.id);
-      const faded = state.focusMode && anyHl && !isHl;
       const rankIdx = rankIndexMap[p.id];
       const rowStyle = `background:${isHl ? rgba(p.color, 0.10) : p.isRef ? 'var(--ref-bg)' : 'transparent'};`;
       const cellStyle = [
@@ -1004,7 +1106,7 @@
         p.isRef && !isHl ? 'background:var(--panel);border-left-color:var(--dim);' : ''
       ].join('');
       return `
-        <tr class="${faded ? 'faded' : ''}" style="${rowStyle}">
+        <tr style="${rowStyle}">
           <td class="model-cell ${p.isRef ? 'ref' : ''}" style="${cellStyle}">
             <div class="model-inline">
               ${rankIdx && !p.isRef ? `<span class="rank-badge ${rankIdx === 1 ? 'first' : ''}">#${rankIdx}</span>` : ''}
@@ -1016,7 +1118,7 @@
             const display = getDisplay(raw, c);
             const tone = cfg.colorize ? textTone(display) : '';
             const isBest = state.showBadges && bestMap[c.key] === p.id && !p.isRef;
-            return `<td style="${isHl ? 'font-weight:700' : ''}"><span class="${tone}">${escapeHtml(display)}</span>${isBest ? '<span class="best-badge">最佳</span>' : ''}</td>`;
+            return `<td style="${isHl ? 'font-weight:700' : ''}"><span class="${tone}">${escapeHtml(display)}</span>${isBest ? `<span class="best-badge">${icon.bestMark}最佳</span>` : ''}</td>`;
           }).join('')}
         </tr>
       `;
@@ -1065,7 +1167,6 @@
     function renderRank(id, col, isAsc) {
       const cfg = SEC_CONFIG[id];
       if (!col) return `<div class="rank-card"><span class="hint">请选择排序维度</span></div>`;
-      const anyHl = state.highlighted.length > 0;
       const items = PRODUCTS.filter(p => !p.isRef).map(p => ({
         product: p,
         value: getNumeric(cfg.data[p.id]?.[col.key], col),
@@ -1088,7 +1189,6 @@
           ${ordered.map((item, idx) => {
             const p = item.product;
             const isHl = state.highlighted.includes(p.id);
-            const faded = state.focusMode && anyHl && !isHl;
             let rankIdx = idx + 1;
             if (col.better && col.better !== 'none') {
               const goodIdx = byGood.findIndex(x => x.product.id === p.id);
@@ -1098,7 +1198,7 @@
             const barWidth = item.value == null || !absMax ? 0 : Math.max(0, (item.value / absMax) * 100);
             const avgLine = item.value != null && absMax > 0 ? (average / absMax) * 100 : 0;
             return `
-              <div class="rank-item ${faded ? 'faded' : ''}">
+              <div class="rank-item">
                 <div class="rank-main">
                   <div class="rank-name">
                     <span class="rank-number">${medal ? `#${medal}` : (rankIdx ? `#${rankIdx}` : '—')}</span>
@@ -1114,16 +1214,15 @@
             `;
           }).join('')}
           ${values.length ? `<div class="avg-note"><span class="avg-mark"></span>平均值 ${average.toFixed(col.unit === '' ? 2 : 1)}${escapeHtml(col.unit || '')}</div>` : ''}
-          ${refProduct && refValue != null ? renderRefRank(refProduct, refValue, refDisplay, absMax, anyHl) : ''}
+          ${refProduct && refValue != null ? renderRefRank(refProduct, refValue, refDisplay, absMax) : ''}
         </div>
       `;
     }
 
-    function renderRefRank(refProduct, refValue, refDisplay, absMax, anyHl) {
-      const faded = state.focusMode && anyHl && !state.highlighted.includes(refProduct.id);
+    function renderRefRank(refProduct, refValue, refDisplay, absMax) {
       const width = absMax ? Math.max(0, (refValue / absMax) * 100) : 0;
       return `
-        <div class="ref-block ${faded ? 'faded' : ''}">
+        <div class="ref-block">
           <div class="ref-label">参考（不参与排名）</div>
           <div class="rank-main">
             <div class="rank-name">
@@ -1147,20 +1246,19 @@
       toggleDark() {
         setAndRender(() => { state.dark = !state.dark; }, true);
       },
-      toggleFocus() {
-        setAndRender(() => { state.focusMode = !state.focusMode; }, true);
-      },
       toggleBadges() {
         setAndRender(() => { state.showBadges = !state.showBadges; }, true);
       },
       toggleRankIdx() {
         setAndRender(() => { state.showRankIdx = !state.showRankIdx; }, true);
       },
-      enterRecord() {
-        setAndRender(() => { state.recordMode = true; }, true);
+      toggleInfo(id) {
+        setAndRender(() => {
+          state.activeInfo = state.activeInfo === id ? null : id;
+        }, true);
       },
-      exitRecord() {
-        setAndRender(() => { state.recordMode = false; }, true);
+      closeInfo() {
+        setAndRender(() => { state.activeInfo = null; }, true);
       },
       toggleHighlight(id) {
         setAndRender(() => {
@@ -1230,9 +1328,6 @@
             sec.sortAsc = null;
           }
         }, true);
-      },
-      exportImage() {
-        alert('这个 HTML 是纯本地文件。请使用系统截图功能截取当前区块。');
       },
     };
 
