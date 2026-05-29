@@ -7,7 +7,7 @@ const WATERMARK_ITEMS = Array.from({ length: 72 }).map(function(_, i) {
 
 const THEME = {
   dark: {
-    navBg: '#171F2E',
+    navBg: '#0E1623',
     navFront: '#ffffff'
   },
   light: {
@@ -17,14 +17,27 @@ const THEME = {
 };
 
 const PRODUCTS = [
-  { id: 'yanxin', name: '雁鑫 X300', short: '雁鑫', isRef: false, color: '#6D7890' },
-  { id: 'spd', name: 'SPD 72260S', short: 'SPD', isRef: false, color: '#727B8E' },
-  { id: 'lingbo', name: '凌博 E260 Pro Max', short: '凌博', isRef: false, color: '#6E788A' },
-  { id: 'apt', name: 'APT F300', short: 'APT', isRef: false, color: '#747D8D' },
-  { id: 'zhike', name: '智科 72260', short: '智科', isRef: false, color: '#4E67E8' },
-  { id: 'datai', name: '大泰 72260', short: '大泰', isRef: false, color: '#858D9A' },
-  { id: 'ninebot', name: '九号 M395C 原厂', short: '九号原厂', isRef: true, color: '#687385' }
+  { id: 'yanxin', name: '雁鑫 X300', short: '雁鑫', isRef: false, color: '#1FA98F' },
+  { id: 'spd', name: 'SPD 72260S', short: 'SPD', isRef: false, color: '#D88A2C' },
+  { id: 'lingbo', name: '凌博 E260 Pro Max', short: '凌博', isRef: false, color: '#8B5FE0' },
+  { id: 'apt', name: 'APT F300', short: 'APT', isRef: false, color: '#E0524D' },
+  { id: 'zhike', name: '智科 72260', short: '智科', isRef: false, color: '#5E7BFF' },
+  { id: 'datai', name: '大泰 72260', short: '大泰', isRef: false, color: '#6FAE3A' },
+  { id: 'ninebot', name: '九号 M395C 原厂', short: '九号原厂', isRef: true, color: '#6E7889' }
 ];
+
+function iconPath(name, suffix) {
+  return '/assets/icons/' + name + (suffix ? '-' + suffix : '') + '.svg';
+}
+
+function toneIcon(name, dark, active) {
+  if (active) return iconPath(name, dark ? 'active' : 'active-light');
+  return iconPath(name, dark ? '' : 'light');
+}
+
+function textIcon(name, dark) {
+  return iconPath(name, dark ? 'text' : 'text-light');
+}
 
 const HARDWARE = {
   yanxin: { price: 768.75, busA: 100, phaseA: 300, vMin: 48, vMax: 72, water: '无', proto: '全协议' },
@@ -89,51 +102,51 @@ const ACCEL = {
 const SECTION_INFO = {
   hardware: {
     title: '硬件规格怎么看',
-    intro: '这一页主要帮你先判断“能不能用、值不值、余量够不够”。',
+    intro: '这一页先看能不能用、值不值、余量够不够。',
     points: [
-      '母线电流可以理解为电池侧能给出去的总力气，通常越高越容易支撑高速和持续输出。',
-      '相线电流更像电机起步和低速爆发时用到的力，数值高不等于一定更快，还要看调校、散热和保护策略。',
-      '电压范围决定能不能适配你的电池平台；协议决定能不能和车上的仪表、蓝牙、刹车等功能正常配合。'
+      '母线电流像电池给出的总力气，通常越高越能撑高速和持续输出。',
+      '相线电流更影响起步和低速爆发，实际快不快还要看调校和散热。',
+      '电压看能不能配电池，协议看仪表、蓝牙、刹车等功能能否配合。'
     ],
     note: '九号原厂作为参考基线，不参与对比控制器排名。'
   },
   software: {
     title: '软件和辅助功能怎么看',
-    intro: '这一页看的是日常用起来省不省心，不只看性能数字。',
+    intro: '这一页看日常用起来省不省心，不只看性能数字。',
     points: [
-      '蓝牙连接和 OTA 升级代表后期调参、更新和排查问题是否方便。',
+      '蓝牙和 OTA 影响后期调参、更新、排查问题是否方便。',
       '调节项标注越清楚，新手越不容易误改关键参数。',
-      '巡航、制动巡航、驻车刹车灯属于辅助功能，重点看是否稳定可用，以及和原车逻辑是否匹配。'
+      '巡航、制动巡航、驻车刹车灯重点看是否稳定，以及是否匹配原车逻辑。'
     ],
     note: '软件评分是基于本次测试体验整理，不能替代长期使用稳定性结论。'
   },
   handling: {
     title: '骑行手感怎么看',
-    intro: '这里关注的是低速跟车、起步补油和电门开合时好不好控制。',
+    intro: '这里看低速跟车、起步补油和电门开合好不好控。',
     points: [
-      '电门延迟越小，给油后的反应越直接，但过于激进也可能不好掌控。',
-      '线性度越好，电门从小到大的输出越顺，不容易突然窜车。',
-      '空行程太大容易觉得“拧了没反应”，太小又可能低速紧张。'
+      '电门延迟越小，给油反应越直接，但太冲也会不好控。',
+      '线性度越好，电门输出越顺，不容易突然窜车。',
+      '空行程太大会觉得拧了没反应，太小又容易低速紧张。'
     ],
     note: '手感带有主观体验，本页用于横向参考，不等同于绝对性能排名。'
   },
   thermal: {
     title: '温控限流怎么看',
-    intro: '温控限流可以理解为控制器热起来以后会不会主动收力。',
+    intro: '温控限流就是控制器热起来后会不会主动收力。',
     points: [
-      '基线电流是起步后前 60 秒内的高输出参考，用来判断后面掉了多少。',
-      '越晚跌破 90%、80%、60%，说明高输出能保持得越久。',
-      '最终保持比例越高，代表热起来之后还剩多少持续输出能力。'
+      '基线电流是前 60 秒高输出参考，用来判断后面掉了多少。',
+      '越晚跌破 90%、80%、60%，说明高输出保持得越久。',
+      '最终保持比例越高，代表热起来后剩余输出越多。'
     ],
     note: '几乎不限流不一定永远更好，还要结合温度、保护策略和长期可靠性看。'
   },
   stable: {
     title: '稳定输出和耗电怎么看',
-    intro: '这一页把不同控制器放在尽量接近的输出区间里比较能耗。',
+    intro: '这一页把控制器放在接近的输出区间里比较能耗。',
     points: [
-      'Wh/km 越低，代表跑同样距离耗电更少，通常更省电。',
+      'Wh/km 越低，跑同样距离耗电越少，通常更省电。',
       'km/Ah 越高，代表同样电量能跑得更远。',
-      '平均功率和平均电流能反映这段测试里实际输出强度，不能单独当作续航结论。'
+      '平均功率和平均电流只说明这段输出强度，不能单独当续航结论。'
     ],
     note: '里程缺失或参考样本只作辅助观察，不参与有效排名。'
   },
@@ -141,9 +154,9 @@ const SECTION_INFO = {
     title: '加速测试怎么看',
     intro: '加速页关注的是不同速度段的响应和后段能力。',
     points: [
-      '0-30 更偏起步和低速响应，适合看日常起步是否轻快。',
+      '0-30 更偏起步和低速响应，看日常起步是否轻快。',
       '0-60 和 40-70 更能看中后段持续加速能力。',
-      '500m 耗时越短、尾速越高，通常说明整段加速能力更强。'
+      '500m 耗时越短、尾速越高，通常说明整段加速更强。'
     ],
     note: '每项取 3 次测试平均值；未测项目只作为边界参考，不参与对应排名。'
   }
@@ -252,13 +265,38 @@ function getDisplay(val, col) {
   return String(val);
 }
 
-function textTone(val) {
-  const good = ['连3次均成功', '说明清晰易懂', '可激活', '很线性', '延迟可控', '亮', 'OTA在线升级', '全协议'];
-  const bad = ['无说明', '不可激活', '不亮', '不线性', '延迟较大', '断电', '硬断电', '几乎不限流'];
-  const warn = ['部分说明', '适中', '较小', '高温无法打开/低温不亮后灯', 'CAN协议'];
-  if (good.some(function(k) { return val === k; })) return 'good';
-  if (bad.some(function(k) { return val.indexOf(k) >= 0; })) return 'bad';
-  if (warn.some(function(k) { return val === k; })) return 'warn';
+function textTone(colKey, val) {
+  if (val == null || val === '—' || val === '无') return '';
+  if (colKey === 'bt' && val === '连3次均成功') return 'good';
+  if (colKey === 'ota' && val === 'OTA在线升级') return 'good';
+  if (colKey === 'label') {
+    if (val === '说明清晰易懂') return 'good';
+    if (val === '部分说明') return 'warn';
+    if (val === '无说明') return 'bad';
+  }
+  if (colKey === 'cruise') {
+    if (val === '仅拧电门可激活') return 'good';
+    if (val === '松油门可激活') return 'bad';
+  }
+  if (colKey === 'brakeCruise') {
+    if (val === '不可激活') return 'good';
+    if (val === '可激活') return 'bad';
+  }
+  if (colKey === 'parkLight') {
+    if (val === '亮') return 'good';
+    if (val === '不亮') return 'bad';
+    if (val.indexOf('高温') >= 0 || val.indexOf('低温') >= 0) return 'warn';
+  }
+  if (colKey === 'delay') {
+    if (val === '延迟可控') return 'good';
+    if (val === '延迟较大') return 'bad';
+  }
+  if (colKey === 'linearity') {
+    if (val === '很线性') return 'good';
+    if (val === '适中') return 'warn';
+    if (val === '不线性') return 'bad';
+  }
+  if (colKey === 'deadzone' && val === '适中') return 'good';
   return '';
 }
 
@@ -274,6 +312,23 @@ function hexToRgb(hex) {
 function rgba(hex, alpha) {
   const c = hexToRgb(hex);
   return 'rgba(' + c.r + ', ' + c.g + ', ' + c.b + ', ' + alpha + ')';
+}
+
+function hexByte(value) {
+  const s = Math.max(0, Math.min(255, Math.round(value))).toString(16);
+  return s.length === 1 ? '0' + s : s;
+}
+
+function blendHex(fgHex, bgHex, alpha) {
+  const fg = hexToRgb(fgHex);
+  const bg = hexToRgb(bgHex);
+  return '#' + hexByte(fg.r * alpha + bg.r * (1 - alpha)) +
+    hexByte(fg.g * alpha + bg.g * (1 - alpha)) +
+    hexByte(fg.b * alpha + bg.b * (1 - alpha));
+}
+
+function modelHighlightBg(color, dark) {
+  return blendHex(color, dark ? '#18212F' : '#FFFFFF', dark ? 0.14 : 0.10);
 }
 
 function defaultSectionState(id, saved) {
@@ -298,8 +353,8 @@ function normalizeSaved(saved) {
   return {
     dark: source.dark !== false,
     highlighted: Array.isArray(source.highlighted) ? source.highlighted : [],
-    showBadges: source.showBadges !== false,
-    showRankIdx: source.showRankIdx !== false,
+    showBadges: source.showBadges === true,
+    showRankIdx: source.showRankIdx === true,
     activeSection: SECTION_IDS.indexOf(source.activeSection) >= 0 ? source.activeSection : 'hardware',
     sections: sections
   };
@@ -390,7 +445,7 @@ function buildRows(cfg, cols, sortCol, isAsc, state) {
       highlighted: highlighted,
       rankLabel: rankIdx && !p.isRef ? '#' + rankIdx : '',
       rowStyle: highlighted ? 'background:' + rgba(p.color, 0.10) + ';' : (p.isRef ? 'background:var(--ref-bg);' : ''),
-      modelStyle: highlighted ? 'color:' + p.color + ';background:' + rgba(p.color, 0.14) + ';border-left-color:' + p.color + ';' : (p.isRef ? 'border-left-color:var(--dim);' : ''),
+      modelStyle: highlighted ? 'color:' + p.color + ';background:' + modelHighlightBg(p.color, state.dark) + ';border-left-color:' + p.color + ';' : (p.isRef ? 'border-left-color:var(--dim);' : ''),
       cells: cols.map(function(c) {
         const raw = cfg.data[p.id] && cfg.data[p.id][c.key];
         const display = getDisplay(raw, c);
@@ -398,7 +453,7 @@ function buildRows(cfg, cols, sortCol, isAsc, state) {
           key: c.key,
           display: display,
           longText: String(display).length > 9 || c.key === 'parkLight',
-          tone: cfg.colorize ? textTone(display) : '',
+          tone: cfg.colorize ? textTone(c.key, display) : '',
           best: state.showBadges && bestMap[c.key] === p.id && !p.isRef
         };
       })
@@ -443,6 +498,7 @@ function buildRank(cfg, col, isAsc, highlighted) {
       id: p.id,
       name: p.name,
       display: item.display,
+      isLast: idx === ordered.length - 1,
       rankLabel: rankIdx ? '#' + rankIdx : '—',
       productStyle: isHl ? 'color:' + p.color + ';border-left-color:' + p.color + ';' : '',
       valueStyle: isHl ? 'color:' + p.color + ';' : '',
@@ -465,6 +521,7 @@ function buildRank(cfg, col, isAsc, highlighted) {
 }
 
 function buildSections(state) {
+  const dark = state.dark;
   return SECTION_IDS.map(function(id) {
     const cfg = SEC_CONFIG[id];
     const sec = state.sections[id] || defaultSectionState(id);
@@ -476,10 +533,12 @@ function buildSections(state) {
       : '';
     const rank = buildRank(cfg, sort.col, sort.isAsc, state.highlighted);
     const visibleColumns = cols.map(function(c) {
-      let sortIcon = '/assets/icons/sort.svg';
-      if (sort.col && sort.col.key === c.key) sortIcon = sort.isAsc ? '/assets/icons/up.svg' : '/assets/icons/down.svg';
+      let sortIcon = toneIcon('sort', dark, false);
+      if (sort.col && sort.col.key === c.key) sortIcon = toneIcon(sort.isAsc ? 'up' : 'down', dark, true);
       return Object.assign({}, c, { visible: true, sortIcon: sortIcon });
     });
+    const isInfoActive = state.activeInfo === id;
+    const isColumnActive = sec.showColPicker;
     return {
       id: id,
       mark: cfg.mark,
@@ -492,6 +551,11 @@ function buildSections(state) {
       view: sec.view,
       sortKey: sort.col ? sort.col.key : '',
       isAsc: sort.isAsc,
+      infoIcon: toneIcon('info', dark, isInfoActive),
+      columnsIcon: toneIcon('columns', dark, isColumnActive),
+      tableIcon: sec.view === 'table' ? iconPath('table', 'active') : toneIcon('table', dark, false),
+      trophyIcon: sec.view === 'rank' ? iconPath('trophy', 'active') : toneIcon('trophy', dark, false),
+      sortToggleIcon: textIcon(sort.isAsc ? 'up' : 'down', dark),
       sortHint: sortHint,
       showColPicker: sec.showColPicker,
       hasRankable: cfg.columns.some(function(c) { return c.rankable; }),
@@ -567,6 +631,10 @@ Page({
     activeSection: 'hardware',
     activeInfo: null,
     activeInfoModal: null,
+    iconTheme: iconPath('theme'),
+    iconBadge: iconPath('badge'),
+    iconRankIdx: iconPath('columns'),
+    iconClose: iconPath('close'),
     scrollInto: '',
     products: [],
     sections: [],
@@ -577,6 +645,10 @@ Page({
     const saved = normalizeSaved(readStorage());
     this.applyState(saved, false);
     this.syncNavigationBar(saved.dark);
+  },
+
+  onShow() {
+    this.syncNavigationBar(this.data.dark);
   },
 
   syncNavigationBar(dark) {
@@ -605,6 +677,10 @@ Page({
       activeSection: state.activeSection,
       activeInfo: next.activeInfo || null,
       activeInfoModal: activeInfoFor(next.activeInfo),
+      iconTheme: toneIcon('theme', state.dark, false),
+      iconBadge: toneIcon('badge', state.dark, state.showBadges),
+      iconRankIdx: toneIcon('columns', state.dark, state.showRankIdx),
+      iconClose: toneIcon('close', state.dark, false),
       products: productsForState(state.highlighted),
       sections: buildSections(state),
       sectionState: state.sections

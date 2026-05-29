@@ -1,6 +1,6 @@
 page {
   min-height: 100%;
-  background: #101722;
+  background: #0E1623;
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
   font-size: 28rpx;
   letter-spacing: 0;
@@ -11,6 +11,8 @@ button {
   margin: 0;
   line-height: 1;
   background: transparent;
+  color: inherit;
+  font-family: inherit;
 }
 
 button::after {

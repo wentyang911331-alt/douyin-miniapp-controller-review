@@ -8,13 +8,13 @@
       <text class="title">{{pageTitle}}</text>
       <view class="tool-row">
         <button class="icon-btn" bindtap="toggleDark" aria-label="主题">
-          <image class="icon-img" src="/assets/icons/theme.svg" mode="aspectFit" />
+          <image class="icon-img" src="{{iconTheme}}" mode="aspectFit" />
         </button>
         <button class="icon-btn {{showBadges ? 'active' : ''}}" bindtap="toggleBadges" aria-label="最佳徽章">
-          <image class="icon-img" src="/assets/icons/badge.svg" mode="aspectFit" />
+          <image class="icon-img" src="{{iconBadge}}" mode="aspectFit" />
         </button>
         <button class="icon-btn {{showRankIdx ? 'active' : ''}}" bindtap="toggleRankIdx" aria-label="排名角标">
-          <image class="icon-img" src="/assets/icons/rank.svg" mode="aspectFit" />
+          <image class="icon-img" src="{{iconRankIdx}}" mode="aspectFit" />
         </button>
       </view>
     </view>
@@ -28,7 +28,7 @@
     <view class="highlight-head">
       <text class="highlight-label">高亮产品 {{highlightedCountText}}</text>
       <button tt:if="{{highlighted.length}}" class="clear-btn" bindtap="clearHighlights">
-        <image class="inline-img" src="/assets/icons/close.svg" mode="aspectFit" />
+        <image class="inline-img" src="{{iconClose}}" mode="aspectFit" />
         <text>清除</text>
       </button>
     </view>
@@ -53,11 +53,11 @@
         <view class="title-group">
           <text class="section-title">{{section.title}}</text>
           <button class="section-icon-btn {{activeInfo === section.id ? 'active' : ''}}" data-id="{{section.id}}" bindtap="toggleInfo" aria-label="模块说明">
-            <image class="icon-img" src="/assets/icons/info.svg" mode="aspectFit" />
+            <image class="icon-img" src="{{section.infoIcon}}" mode="aspectFit" />
           </button>
         </view>
         <button class="section-icon-btn {{section.showColPicker ? 'active' : ''}}" data-id="{{section.id}}" bindtap="toggleColPicker" aria-label="显示列">
-          <image class="icon-img" src="/assets/icons/columns.svg" mode="aspectFit" />
+          <image class="icon-img" src="{{section.columnsIcon}}" mode="aspectFit" />
         </button>
       </view>
 
@@ -83,12 +83,12 @@
       <view tt:if="{{section.hasRankable}}" class="view-row">
         <view class="seg">
           <button class="seg-btn {{section.view === 'table' ? 'active' : ''}}" data-id="{{section.id}}" data-view="table" bindtap="setView">
-            <image class="inline-img" src="{{section.view === 'table' ? '/assets/icons/table-active.svg' : '/assets/icons/table.svg'}}" mode="aspectFit" />
+            <image class="inline-img" src="{{section.tableIcon}}" mode="aspectFit" />
             <text>表格</text>
           </button>
           <button class="seg-btn {{section.view === 'rank' ? 'active' : ''}}" data-id="{{section.id}}" data-view="rank" bindtap="setView">
-            <image class="inline-img" src="{{section.view === 'rank' ? '/assets/icons/trophy-active.svg' : '/assets/icons/trophy.svg'}}" mode="aspectFit" />
-            <text>排行榜</text>
+            <image class="inline-img" src="{{section.trophyIcon}}" mode="aspectFit" />
+            <text>排行</text>
           </button>
         </view>
         <view tt:if="{{section.view === 'rank'}}" class="rank-tools">
@@ -106,7 +106,7 @@
             </button>
           </scroll-view>
           <button class="sort-btn" data-id="{{section.id}}" bindtap="toggleSort">
-            <image class="inline-img" src="{{section.isAsc ? '/assets/icons/up.svg' : '/assets/icons/down.svg'}}" mode="aspectFit" />
+            <image class="inline-img" src="{{section.sortToggleIcon}}" mode="aspectFit" />
             <text>{{section.isAsc ? '升序' : '降序'}}</text>
           </button>
           <text tt:if="{{section.sortHint}}" class="hint">{{section.sortHint}}</text>
@@ -146,10 +146,10 @@
       </scroll-view>
 
       <view tt:else class="rank-card">
-        <view tt:for="{{section.rankItems}}" tt:for-item="rankItem" tt:key="id" class="rank-item">
+        <view tt:for="{{section.rankItems}}" tt:for-item="rankItem" tt:key="id" class="rank-item {{rankItem.isLast ? 'last' : ''}}">
           <view class="rank-main">
             <view class="rank-name">
-              <text class="rank-number">{{rankItem.rankLabel}}</text>
+              <text class="rank-number {{rankItem.rankLabel === '#1' ? 'first' : ''}}">{{rankItem.rankLabel}}</text>
               <text class="rank-product" style="{{rankItem.productStyle}}">{{rankItem.name}}</text>
             </view>
             <text class="rank-value" style="{{rankItem.valueStyle}}">{{rankItem.display}}</text>
@@ -188,7 +188,7 @@
       <view class="info-modal-head">
         <text class="info-modal-title">{{activeInfoModal.title}}</text>
         <button class="modal-close" bindtap="closeInfo" aria-label="关闭说明">
-          <image class="icon-img" src="/assets/icons/close.svg" mode="aspectFit" />
+          <image class="icon-img" src="{{iconClose}}" mode="aspectFit" />
         </button>
       </view>
       <scroll-view class="info-modal-body" scroll-y enhanced show-scrollbar="{{false}}">

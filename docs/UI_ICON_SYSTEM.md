@@ -67,6 +67,7 @@
 - SVG 使用统一模板：`viewBox="0 0 20 20"`、`fill="none"`、`stroke="currentColor"`。
 - 图标按钮统一使用同一个基础类，例如 `icon-btn`；状态只通过 `active`、`disabled` 等类切换。
 - 后续迁移抖音小程序时，图标可转为内联 SVG 片段、图片资源或 TTML 可接受的等价结构。
+- 当前原生抖音小程序生产实现使用 `<image>` 加载 SVG。由于 `<image>` 不能可靠继承 `currentColor`，运行资源采用固定 stroke 色的多状态 SVG 变体，并通过数据字段切换路径，不依赖 CSS `filter` 变色。
 
 ## 本次产出文件
 
