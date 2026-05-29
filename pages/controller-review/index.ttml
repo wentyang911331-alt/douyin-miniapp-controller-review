@@ -202,4 +202,20 @@
       <button class="modal-ok" bindtap="closeInfo">我知道了</button>
     </view>
   </view>
+
+  <view tt:if="{{loadingVisible}}" class="mt-loading {{loadingEntering ? 'mt-enter' : ''}} {{loadingLeaving ? 'is-leaving' : ''}} {{loadingDrawing ? 'is-drawing' : ''}}">
+    <view class="mt-card">
+      <view class="mt-logo-mark" aria-label="摩拓 logo 描绘">
+        <canvas id="mtLoadingCanvas" type="2d" class="mt-logo-canvas {{loadingCanvasReady ? 'ready' : ''}}"></canvas>
+        <view tt:if="{{!loadingCanvasReady}}" class="mt-logo-fallback">
+          <view class="mt-stroke mt-stroke-one"></view>
+          <view class="mt-stroke mt-stroke-two"></view>
+          <view class="mt-stroke mt-stroke-three"></view>
+        </view>
+      </view>
+      <view class="mt-bar">
+        <view class="mt-bar-fill" style="{{loadingProgressStyle}}"></view>
+      </view>
+    </view>
+  </view>
 </view>

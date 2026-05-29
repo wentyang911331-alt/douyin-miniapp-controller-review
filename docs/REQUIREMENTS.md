@@ -4,15 +4,47 @@
 
 项目中目前保留一个原始静态 HTML 文件：`controller-review(1).html`。它用于展示控制器横向测试结果，页面内置静态数据、样式和交互逻辑。
 
-当前已完成 1.1.2 视觉、交互和说明文案修补。1.1.4 已从 `v1.1.2` 建立开发分支，并已收到 UI 侧交付的 1.1.4 视觉换肤包。
+当前已完成 1.1.4 视觉换肤版本，并已推送 GitHub 标签 `v1.1.4`。1.1.5 从 `v1.1.4` 继续推进标题 / logo 和进入页 loading 需求。
 
 ## 版本范围
 
-- 当前开发版本：1.1.4
-- 当前开发分支：`codex/v1.1.4-visual-reskin-from-v1.1.2`
-- 代码基线：`v1.1.2`
-- 版本目标：基于 1.1.2 还原 UI 侧交付的 1.1.4 视觉换肤效果
+- 当前版本：1.1.5
+- 当前开发分支：`codex/v1.1.5-title-logo`
+- 代码基线：`v1.1.4`
+- 版本目标：调整原生导航栏标题 / logo 口径，并为进入页 loading 动画建立设计交付与接入规则
 - 备份要求：每个版本都需要推送到 GitHub，并保留可回滚的版本标签
+
+## 1.1.5 需求口径
+
+1.1.5 包含两类需求：原生导航栏标题 / logo 调整，以及进入页面 loading 动画。
+
+### 标题与 logo
+
+- 用户圈选的位置是抖音小程序原生导航栏区域，不是页面 TTML 内的顶部标题区。
+- 原生导航栏左侧圆形小程序 logo 属于平台控制，不通过页面代码替换；如需变更，需要在抖音开放平台的小程序品牌 / logo 配置中处理。
+- 代码侧将原生导航栏标题文字从 `2026年春季260级控制器对比手册` 改为 `摩拓`。
+- 页面正文内的大标题 `2026年春季260级控制器对比手册` 暂不修改，避免影响报告内容识别。
+- 已处理用户提供的 SVG 图标，保留圆形 logo mark 资源：
+  - `assets/brand/motuo-mark-dark.svg`
+  - `assets/brand/motuo-mark-light.svg`
+  - `assets/brand/motuo-mark-app-icon.png`
+- 深色模式圆形 logo 使用主题蓝 `#5E7BFF`，明亮模式圆形 logo 使用主题蓝 `#3B54D6`；图形内部保持白色。
+- `motuo-mark-app-icon.png` 为 1024 x 1024 透明背景 PNG，用于开发者工具或开放平台需要上传小程序头像 / logo 时使用。
+- 原生导航栏标题 `摩拓` 的文字颜色继续通过 `navigationBarTextStyle` 和 `tt.setNavigationBarColor` 控制：深色模式白色前景，明亮模式黑色前景。
+
+### 进入页 loading
+
+- 进入页面时需要展示 loading 动画。
+- 即使页面可以秒加载，也必须至少展示 1 秒 loading。
+- 如果页面真实加载超过 1 秒，loading 需要持续到真实加载完成后再关闭。
+- loading 背后需要对主页面做高斯模糊或等效压暗处理，让焦点停留在 loading 动画上。
+- loading 视觉由设计侧交付代码，交付物可能包含 HTML / CSS / JS；前端落地时需要转译为抖音小程序可用的 TTML / TTSS / JS，不直接照搬浏览器 DOM API。
+- 设计交付代码不得依赖 `window`、`document`、`innerHTML`、外链脚本、远程字体或浏览器专属动画库。
+- loading 动画应可在深色 / 明亮模式下识别，并使用 1.1.5 品牌圆形 logo 的同一套图形和主题色口径。
+- loading 关闭后不改变当前页面数据、排序、高亮、主题、列显示等已有状态。
+- 当前已将 UI 交付包中的 loading 结构转译进原生小程序页面：使用 TTML view / canvas 结构、TTSS keyframes 和页面 JS 状态机实现，不使用 inline SVG / 浏览器 DOM。
+- logo 笔画优先使用 Canvas V2 按 UI 包坐标绘制；不支持 canvas 节点时使用 view 组合动画兜底。`assets/brand/motuo-mark-*.svg` 作为平台侧配置和后续品牌资源留存，不直接嵌入原生导航栏页面代码。
+- 当前静态页面的真实加载完成点暂定为 `onReady`；如后续接入真实异步数据，可把 `markEntryReady()` 延后到真实数据 ready 回调中。
 
 ## 1.1.4 需求口径
 

@@ -1,9 +1,40 @@
 const PAGE_TITLE = '2026年春季260级控制器对比手册';
+const NAV_TITLE = '摩拓';
 const STORAGE_KEY = 'ctrl-review-miniapp-v1';
 const WATERMARK_TEXT = '小拓子';
 const WATERMARK_ITEMS = Array.from({ length: 72 }).map(function(_, i) {
   return { id: i, text: WATERMARK_TEXT };
 });
+
+const LOADING = {
+  minMs: 1000,
+  phaseOneMs: 420,
+  fillMs: 220,
+  holdMs: 340,
+  creepPercent: 90,
+  creepMs: 6000,
+  drawMs: 960,
+  drawPauseMs: 500,
+  enterMs: 320,
+  leaveMs: 280
+};
+
+const LOADING_CANVAS = {
+  width: 108,
+  height: 64,
+  viewBox: { x: 294, y: 347, width: 252, height: 150 },
+  lineWidth: 35.7,
+  lineOne: [[318.9, 472], [400.4, 378.3]],
+  lineTwo: [
+    [383.6, 472],
+    [458, 386.5],
+    [464.8, 381.2],
+    [474.3, 382.4],
+    [490.5, 398.6],
+    [490.5, 472]
+  ],
+  dot: { x: 529, y: 380.8, r: 20.3 }
+};
 
 const THEME = {
   dark: {
@@ -37,6 +68,55 @@ function toneIcon(name, dark, active) {
 
 function textIcon(name, dark) {
   return iconPath(name, dark ? 'text' : 'text-light');
+}
+
+function loadingProgressStyle(percent, ms, ease) {
+  return 'width:' + percent + '%;transition:width ' + ms + 'ms ' + (ease || 'linear') + ';';
+}
+
+function distance(a, b) {
+  const dx = b[0] - a[0];
+  const dy = b[1] - a[1];
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+function scaleLogoPoint(point) {
+  const scale = LOADING_CANVAS.width / LOADING_CANVAS.viewBox.width;
+  return [
+    (point[0] - LOADING_CANVAS.viewBox.x) * scale,
+    (point[1] - LOADING_CANVAS.viewBox.y) * scale
+  ];
+}
+
+function drawLogoSegment(ctx, points, progress) {
+  if (progress <= 0) return;
+  const scaled = points.map(scaleLogoPoint);
+  const lengths = [];
+  let total = 0;
+  for (let i = 0; i < scaled.length - 1; i += 1) {
+    const len = distance(scaled[i], scaled[i + 1]);
+    lengths.push(len);
+    total += len;
+  }
+  let target = total * Math.min(progress, 1);
+  ctx.beginPath();
+  ctx.moveTo(scaled[0][0], scaled[0][1]);
+  for (let i = 0; i < lengths.length; i += 1) {
+    const start = scaled[i];
+    const end = scaled[i + 1];
+    if (target >= lengths[i]) {
+      ctx.lineTo(end[0], end[1]);
+      target -= lengths[i];
+    } else {
+      const ratio = lengths[i] ? target / lengths[i] : 0;
+      ctx.lineTo(
+        start[0] + (end[0] - start[0]) * ratio,
+        start[1] + (end[1] - start[1]) * ratio
+      );
+      break;
+    }
+  }
+  ctx.stroke();
 }
 
 const HARDWARE = {
@@ -631,6 +711,12 @@ Page({
     activeSection: 'hardware',
     activeInfo: null,
     activeInfoModal: null,
+    loadingVisible: true,
+    loadingEntering: false,
+    loadingLeaving: false,
+    loadingDrawing: false,
+    loadingCanvasReady: false,
+    loadingProgressStyle: loadingProgressStyle(0, 0),
     iconTheme: iconPath('theme'),
     iconBadge: iconPath('badge'),
     iconRankIdx: iconPath('columns'),
@@ -642,19 +728,29 @@ Page({
   },
 
   onLoad() {
+    this.startEntryLoading();
     const saved = normalizeSaved(readStorage());
     this.applyState(saved, false);
     this.syncNavigationBar(saved.dark);
+  },
+
+  onReady() {
+    this.initLoadingCanvas();
+    this.markEntryReady();
   },
 
   onShow() {
     this.syncNavigationBar(this.data.dark);
   },
 
+  onUnload() {
+    this.clearEntryLoadingTimers();
+  },
+
   syncNavigationBar(dark) {
     try {
       if (typeof tt !== 'undefined' && tt.setNavigationBarTitle) {
-        tt.setNavigationBarTitle({ title: PAGE_TITLE });
+        tt.setNavigationBarTitle({ title: NAV_TITLE });
       }
       if (typeof tt !== 'undefined' && tt.setNavigationBarColor) {
         const theme = dark ? THEME.dark : THEME.light;
@@ -687,6 +783,208 @@ Page({
     };
     this.setData(data);
     if (shouldSave) writeStorage(state);
+  },
+
+  scheduleEntryLoading(fn, ms) {
+    this._loadingTimers = this._loadingTimers || [];
+    const timer = setTimeout(fn, ms);
+    this._loadingTimers.push(timer);
+    return timer;
+  },
+
+  clearEntryLoadingTimers() {
+    if (this._loadingTimers) {
+      this._loadingTimers.forEach(function(timer) {
+        clearTimeout(timer);
+      });
+    }
+    this._loadingTimers = [];
+    if (this._loadingLogoTimer) {
+      clearTimeout(this._loadingLogoTimer);
+      this._loadingLogoTimer = null;
+    }
+    this.stopLoadingCanvasLoop();
+  },
+
+  drawLoadingLogoOnce() {
+    this.setData({ loadingDrawing: false });
+    this.scheduleEntryLoading(() => {
+      if (!this.data.loadingVisible || this.data.loadingLeaving) return;
+      this.setData({ loadingDrawing: true });
+    }, 20);
+  },
+
+  startLoadingLogoLoop() {
+    const loop = () => {
+      if (!this.data.loadingVisible || this.data.loadingLeaving) return;
+      this.drawLoadingLogoOnce();
+      this._loadingLogoTimer = this.scheduleEntryLoading(loop, LOADING.drawMs + LOADING.drawPauseMs);
+    };
+    if (this._loadingLogoTimer) {
+      clearTimeout(this._loadingLogoTimer);
+      this._loadingLogoTimer = null;
+    }
+    loop();
+  },
+
+  initLoadingCanvas() {
+    if (typeof tt === 'undefined' || !tt.createSelectorQuery) return;
+    try {
+      const query = this.createSelectorQuery ? this.createSelectorQuery() : tt.createSelectorQuery();
+      query
+        .select('#mtLoadingCanvas')
+        .node()
+        .exec((res) => {
+          if (!res || !res[0] || !res[0].node) return;
+          const canvas = res[0].node;
+          const ctx = canvas.getContext && canvas.getContext('2d');
+          if (!ctx) return;
+          const dpr = tt.getSystemInfoSync ? (tt.getSystemInfoSync().pixelRatio || 1) : 1;
+          canvas.width = LOADING_CANVAS.width * dpr;
+          canvas.height = LOADING_CANVAS.height * dpr;
+          ctx.scale(dpr, dpr);
+          this._loadingCanvas = canvas;
+          this._loadingCanvasCtx = ctx;
+          this.setData({ loadingCanvasReady: true });
+          this.stopLoadingLogoLoop();
+          this.startLoadingCanvasLoop();
+        });
+    } catch (e) {}
+  },
+
+  loadingLogoProgress(now) {
+    const cycle = LOADING.drawMs + LOADING.drawPauseMs;
+    const t = ((now - this._entryLoadStart) % cycle + cycle) % cycle;
+    const p1 = Math.max(0, Math.min(1, (t - 60) / 340));
+    const p2 = Math.max(0, Math.min(1, (t - 360) / 380));
+    const dot = Math.max(0, Math.min(1, (t - 700) / 260));
+    return { p1: p1, p2: p2, dot: dot };
+  },
+
+  renderLoadingCanvas() {
+    const canvas = this._loadingCanvas;
+    const ctx = this._loadingCanvasCtx;
+    if (!canvas || !ctx || !this.data.loadingVisible || this.data.loadingLeaving) return;
+    const progress = this.loadingLogoProgress(Date.now());
+    const scale = LOADING_CANVAS.width / LOADING_CANVAS.viewBox.width;
+    ctx.clearRect(0, 0, LOADING_CANVAS.width, LOADING_CANVAS.height);
+    ctx.save();
+    ctx.strokeStyle = this.data.dark ? '#5E7BFF' : '#3B54D6';
+    ctx.fillStyle = ctx.strokeStyle;
+    ctx.lineWidth = LOADING_CANVAS.lineWidth * scale;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    drawLogoSegment(ctx, LOADING_CANVAS.lineOne, progress.p1);
+    drawLogoSegment(ctx, LOADING_CANVAS.lineTwo, progress.p2);
+    if (progress.dot > 0) {
+      const dot = scaleLogoPoint([LOADING_CANVAS.dot.x, LOADING_CANVAS.dot.y]);
+      ctx.globalAlpha = progress.dot;
+      ctx.beginPath();
+      ctx.arc(dot[0], dot[1], LOADING_CANVAS.dot.r * scale * progress.dot, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+    const next = () => this.renderLoadingCanvas();
+    if (canvas.requestAnimationFrame) {
+      this._loadingCanvasFrame = canvas.requestAnimationFrame(next);
+    } else {
+      this._loadingCanvasFallbackTimer = this.scheduleEntryLoading(next, 16);
+    }
+  },
+
+  startLoadingCanvasLoop() {
+    this.stopLoadingCanvasLoop();
+    this.renderLoadingCanvas();
+  },
+
+  stopLoadingCanvasLoop() {
+    if (this._loadingCanvas && this._loadingCanvasFrame && this._loadingCanvas.cancelAnimationFrame) {
+      this._loadingCanvas.cancelAnimationFrame(this._loadingCanvasFrame);
+    }
+    this._loadingCanvasFrame = null;
+    if (this._loadingCanvasFallbackTimer) {
+      clearTimeout(this._loadingCanvasFallbackTimer);
+      this._loadingCanvasFallbackTimer = null;
+    }
+  },
+
+  stopLoadingLogoLoop() {
+    if (this._loadingLogoTimer) {
+      clearTimeout(this._loadingLogoTimer);
+      this._loadingLogoTimer = null;
+    }
+    this.setData({ loadingDrawing: false });
+  },
+
+  setLoadingProgress(percent, ms, ease) {
+    this.setData({
+      loadingProgressStyle: loadingProgressStyle(percent, ms, ease)
+    });
+  },
+
+  startEntryLoading() {
+    this.clearEntryLoadingTimers();
+    this._entryLoadStart = Date.now();
+    this._entryRealDone = false;
+    this._entryPhaseOneDone = false;
+    this._entryFinishing = false;
+    this.setData({
+      loadingVisible: true,
+      loadingEntering: false,
+      loadingLeaving: false,
+      loadingDrawing: false,
+      loadingCanvasReady: false,
+      loadingProgressStyle: loadingProgressStyle(0, 0)
+    });
+    this.scheduleEntryLoading(() => {
+      this.setData({ loadingEntering: true });
+      this.setLoadingProgress(20, LOADING.phaseOneMs);
+    }, 20);
+    this.scheduleEntryLoading(() => {
+      this.setData({ loadingEntering: false });
+    }, LOADING.enterMs);
+    this.startLoadingLogoLoop();
+    this.scheduleEntryLoading(() => {
+      this._entryPhaseOneDone = true;
+      if (this._entryRealDone) {
+        this.finishEntryLoading();
+      } else {
+        this.setLoadingProgress(LOADING.creepPercent, LOADING.creepMs);
+      }
+    }, LOADING.phaseOneMs + 20);
+  },
+
+  markEntryReady() {
+    this._entryRealDone = true;
+    if (this._entryPhaseOneDone) {
+      this.finishEntryLoading();
+    }
+  },
+
+  finishEntryLoading() {
+    if (this._entryFinishing || !this.data.loadingVisible) return;
+    this._entryFinishing = true;
+    this.setLoadingProgress(100, LOADING.fillMs, 'cubic-bezier(.4,0,.2,1)');
+    const elapsed = Date.now() - this._entryLoadStart;
+    const closeIn = Math.max(LOADING.fillMs + LOADING.holdMs, LOADING.minMs - elapsed);
+    this.scheduleEntryLoading(() => {
+      this.closeEntryLoading();
+    }, closeIn);
+  },
+
+  closeEntryLoading() {
+    this.stopLoadingLogoLoop();
+    this.setData({
+      loadingLeaving: true,
+      loadingDrawing: false
+    });
+    this.scheduleEntryLoading(() => {
+      this.setData({
+        loadingVisible: false,
+        loadingLeaving: false,
+        loadingProgressStyle: loadingProgressStyle(0, 0)
+      });
+    }, LOADING.leaveMs);
   },
 
   currentState() {
