@@ -120,13 +120,13 @@ function drawLogoSegment(ctx, points, progress) {
 }
 
 const HARDWARE = {
-  yanxin: { price: 768.75, busA: 100, phaseA: 300, vMin: 48, vMax: 72, water: '无', proto: '全协议' },
-  spd: { price: 488, busA: 80, phaseA: 260, vMin: 48, vMax: 72, water: '无', proto: 'CAN协议' },
-  lingbo: { price: 438, busA: 90, phaseA: 260, vMin: 48, vMax: 76, water: '无', proto: 'CAN协议' },
-  apt: { price: 558, busA: 100, phaseA: 300, vMin: 48, vMax: 80, water: '无', proto: '全协议' },
-  zhike: { price: 385, busA: 80, phaseA: 260, vMin: 48, vMax: 76, water: '无', proto: 'CAN协议' },
-  datai: { price: 410, busA: 90, phaseA: 260, vMin: 48, vMax: 72, water: '无', proto: '全协议' },
-  ninebot: { price: 143, busA: 40, phaseA: null, vMin: 72, vMax: 72, water: '无', proto: 'CAN协议' }
+  yanxin: { busA: 100, phaseA: 300, vMin: 48, vMax: 72, water: '无', proto: '全协议' },
+  spd: { busA: 80, phaseA: 260, vMin: 48, vMax: 72, water: '无', proto: 'CAN协议' },
+  lingbo: { busA: 90, phaseA: 260, vMin: 48, vMax: 76, water: '无', proto: 'CAN协议' },
+  apt: { busA: 100, phaseA: 300, vMin: 48, vMax: 80, water: '无', proto: '全协议' },
+  zhike: { busA: 80, phaseA: 260, vMin: 48, vMax: 76, water: '无', proto: 'CAN协议' },
+  datai: { busA: 90, phaseA: 260, vMin: 48, vMax: 72, water: '无', proto: '全协议' },
+  ninebot: { busA: 40, phaseA: null, vMin: 72, vMax: 72, water: '无', proto: 'CAN协议' }
 };
 
 const SOFTWARE = {
@@ -248,7 +248,6 @@ const SEC_CONFIG = {
     mark: '1. 硬件',
     data: HARDWARE,
     columns: [
-      { key: 'price', label: '价格', type: 'number', unit: '元', better: 'low', rankable: true },
       { key: 'busA', label: '峰值母线', type: 'number', unit: 'A', better: 'high', rankable: true },
       { key: 'phaseA', label: '峰值相线', type: 'number', unit: 'A', better: 'high', rankable: true },
       { key: 'vMin', label: '最低电压', type: 'number', unit: 'V', better: 'none', rankable: true },
@@ -413,13 +412,22 @@ function modelHighlightBg(color, dark) {
 
 function defaultSectionState(id, saved) {
   const cfg = SEC_CONFIG[id];
-  const firstRankable = cfg.columns.find(function(c) { return c.rankable; });
   const sectionSaved = saved && typeof saved === 'object' ? saved : {};
+  const validKeys = cfg.columns.map(function(c) { return c.key; });
+  const hiddenCols = Array.isArray(sectionSaved.hiddenCols)
+    ? sectionSaved.hiddenCols.filter(function(key) { return validKeys.indexOf(key) >= 0; })
+    : [];
+  const savedSortKey = validKeys.indexOf(sectionSaved.sortKey) >= 0 && hiddenCols.indexOf(sectionSaved.sortKey) < 0
+    ? sectionSaved.sortKey
+    : null;
+  const firstRankable = cfg.columns.find(function(c) {
+    return c.rankable && hiddenCols.indexOf(c.key) < 0;
+  });
   return {
     view: sectionSaved.view === 'rank' ? 'rank' : 'table',
-    sortKey: sectionSaved.sortKey || (firstRankable ? firstRankable.key : null),
+    sortKey: savedSortKey || (firstRankable ? firstRankable.key : null),
     sortAsc: typeof sectionSaved.sortAsc === 'boolean' ? sectionSaved.sortAsc : null,
-    hiddenCols: Array.isArray(sectionSaved.hiddenCols) ? sectionSaved.hiddenCols : [],
+    hiddenCols: hiddenCols,
     showColPicker: !!sectionSaved.showColPicker
   };
 }
